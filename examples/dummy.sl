@@ -1,4 +1,4 @@
-load "in.png" as DummyImage
+load "../examples/in.png" as DummyImage
 
 pipeline DummyPipeline {
     resize width=200 height=200

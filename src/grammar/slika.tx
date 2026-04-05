@@ -11,7 +11,7 @@ Load:
 ; 
 
 Pipeline: 
-    'pipeline' name=ID'{' 
+    'pipeline' name=ID '{' 
         steps+=Step
     '}'
 ; 
@@ -21,7 +21,7 @@ Apply:
 ; 
 
 Save: 
-    'save' name=[Load] 'to' path=STRING
+    'save' image=[Load] 'to' path=STRING
 ; 
 
 Comment: 
@@ -29,13 +29,13 @@ Comment:
 ;
 
 Step:
-    Resize | Grayscale 
+    SimpleStep | Resize 
+;
+
+SimpleStep: 
+    op='grayscale'
 ;
 
 Resize:
     'resize' 'width=' width=INT 'height=' height=INT
-;
-
-Grayscale: 
-    'grayscale'
 ;
