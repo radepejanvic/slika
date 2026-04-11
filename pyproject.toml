@@ -1,0 +1,19 @@
+[project]
+name = "slika"
+version = "0.1.0"
+description = "Image processing DSL"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "textX>=4.3.0",
+    "opencv-python>=4.13.0.92",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+slika = "cli:main"
+
+[tool.setuptools.package-data]
+"slika.grammar" = ["*.tx"]
