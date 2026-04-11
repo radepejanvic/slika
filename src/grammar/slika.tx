@@ -1,0 +1,41 @@
+Program: 
+    statements+=Statement
+; 
+
+Statement: 
+    Load | Pipeline | Apply | Save | Comment
+; 
+
+Load: 
+    'load' path=STRING 'as' name=ID
+; 
+
+Pipeline: 
+    'pipeline' name=ID '{' 
+        steps+=Step
+    '}'
+; 
+
+Apply: 
+    'apply' pipeline=[Pipeline] 'to' image=[Load]
+; 
+
+Save: 
+    'save' image=[Load] 'to' path=STRING
+; 
+
+Comment: 
+    /\/\/.*$/
+;
+
+Step:
+    SimpleStep | Resize 
+;
+
+SimpleStep: 
+    op='grayscale'
+;
+
+Resize:
+    'resize' 'width=' width=INT 'height=' height=INT
+;
