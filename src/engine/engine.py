@@ -42,6 +42,8 @@ class Engine:
                 return self.execute_simple_step(image, step)
             case "Resize":
                 return self.backend.resize(image, step.width, step.height)
+            case "ConvertColor":
+                return self.backend.cvt_color(image, step.code)
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             

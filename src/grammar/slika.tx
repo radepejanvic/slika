@@ -29,13 +29,26 @@ Comment:
 ;
 
 Step:
-    SimpleStep | Resize 
+    SimpleStep | Resize | ConvertColor
 ;
 
 SimpleStep: 
-    op='grayscale'
+    op='dummy'
 ;
 
 Resize:
     'resize' 'width=' width=INT 'height=' height=INT
+;
+
+ConvertColor:
+    'cvt_color' code=ColorConversionCode
+;
+
+ColorConversionCode:
+    'bgr2rgb' | 'rgb2bgr' | 
+    'rgb2gray' | 'bgr2gray' | 'gray2rgb' | 'gray2bgr' |
+    'bgr2hsv' | 'rgb2hsv' | 'hsv2bgr' | 'hsv2rgb' |
+    'bgr2hls' | 'rgb2hls' | 'hls2bgr' | 'hls2rgb' |
+    'bgr2lab' | 'rgb2lab' | 'lab2bgr' | 'lab2rgb' |
+    'bgr2luv' | 'rgb2luv' | 'luv2bgr' | 'luv2rgb'
 ;

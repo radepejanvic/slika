@@ -2,7 +2,7 @@ load "./examples/in.png" as DummyImage
 
 pipeline DummyPipeline {
     resize width=200 height=200
-    grayscale
+    cvt_color rgb2gray
 }
 
 apply DummyPipeline to DummyImage

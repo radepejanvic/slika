@@ -15,5 +15,5 @@ class Backend(ABC):
         pass
     
     @abstractmethod
-    def grayscale(self, image):
+    def cvt_color(self, image, code):
         pass

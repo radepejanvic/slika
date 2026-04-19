@@ -17,3 +17,8 @@ slika = "cli:main"
 
 [tool.setuptools.package-data]
 "slika.grammar" = ["*.tx"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]
