@@ -41,7 +41,7 @@ Resize:
 ;
 
 ConvertColor:
-    'cvt_color' code=ColorConversionCode
+    'cvt_color' 'code=' code=ColorConversionCode
 ;
 
 Threshold: 
