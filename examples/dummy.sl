@@ -6,6 +6,8 @@ pipeline DummyPipeline {
     threshold value=200 max_value=255 type=otsu
     erode kernel_size=3 iterations=3
     dilate kernel_size=5 iterations=1
+    opening kernel_size=1 iterations=1
+    closing kernel_size=1 iterations=1
 }
 
 apply DummyPipeline to DummyImage
