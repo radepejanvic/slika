@@ -13,7 +13,11 @@ class Backend(ABC):
     @abstractmethod
     def resize(self, image, width, height):
         pass
-    
+
+    @abstractmethod
+    def crop(self, image, x, y, width, height):
+        pass
+
     @abstractmethod
     def cvt_color(self, image, code):
         pass

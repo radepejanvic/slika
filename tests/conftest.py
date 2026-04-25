@@ -53,5 +53,11 @@ def test_binary_image_with_holes():
     return img
 
 @pytest.fixture
+def test_color_image():
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    img[:] = (255, 0, 0)
+    return img
+
+@pytest.fixture
 def backend():
     return OpenCVBackend()

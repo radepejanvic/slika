@@ -12,6 +12,14 @@ class OpenCVBackend(Backend):
     
     def resize(self, image, width, height):
         return cv2.resize(image, (width, height))
+
+    def crop(self, image, x, y, width, height):
+        img_h, img_w = image.shape[:2]
+
+        x_end = min(x + width, img_w)
+        y_end = min(y + height, img_h)
+
+        return image[y:y_end, x:x_end]
     
     def cvt_color(self, image, code):
         if code not in COLOR_CONVERSION_CODES:

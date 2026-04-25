@@ -160,6 +160,26 @@ def test_pipeline_resize(tmp_path):
     assert result.shape == (50, 50, 3)
 
 
+def test_pipeline_crop(tmp_path):
+    """Tests that crop produces an image with correct dimensions."""
+    input_path = create_test_image(tmp_path)
+    output_path = os.path.join(tmp_path, "output.png")
+
+    program = f"""
+        load "{input_path}" as Slika
+        pipeline Obrada {{
+            crop x=10 y=10 width=50 height=50
+        }}
+        apply Obrada to Slika
+        save Slika to "{output_path}"
+    """
+    run_program(program, tmp_path)
+
+    result = cv2.imread(output_path)
+    assert result is not None
+    assert result.shape == (50, 50, 3)
+
+
 def test_pipeline_cvt_color_to_gray(tmp_path):
     """Tests that color conversion to grayscale produces a single channel image."""
     input_path = create_test_image(tmp_path)

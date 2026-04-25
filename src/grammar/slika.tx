@@ -29,7 +29,9 @@ Comment:
 ;
 
 Step:
-    SimpleStep | Resize | ConvertColor | Threshold | Erode | Dilate | Opening | Closing | Canny
+    SimpleStep | Resize | Crop | ConvertColor |
+    Threshold | Erode | Dilate | Opening |
+    Closing | Canny
 ;
 
 SimpleStep: 
@@ -39,6 +41,12 @@ SimpleStep:
 Resize:
     'resize' 'width=' width=INT 'height=' height=INT
 ;
+
+
+Crop:
+    'crop' 'x=' x=INT 'y=' y=INT 'width=' width=INT 'height=' height=INT
+;
+
 
 ConvertColor:
     'cvt_color' 'code=' code=ColorConversionCode

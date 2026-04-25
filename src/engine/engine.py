@@ -42,9 +42,11 @@ class Engine:
                 return self.execute_simple_step(image, step)
             case "Resize":
                 return self.backend.resize(image, step.width, step.height)
+            case "Crop":
+                return self.backend.crop(image, step.x, step.y, step.width, step.height)
             case "ConvertColor":
                 return self.backend.cvt_color(image, step.code)
-            case "Threshold": 
+            case "Threshold":
                 return self.backend.threshold(image, step.value, step.max_value, step.type)
             case "Erode":
                 return self.backend.erode(image, step.kernel_size, step.iterations)
