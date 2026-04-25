@@ -29,3 +29,11 @@ class Backend(ABC):
     @abstractmethod
     def dilate(self, image, kernel_size=3, iterations=1):
         pass
+
+    @abstractmethod
+    def opening(self, image, kernel_size=3, iterations=1):
+        pass
+
+    @abstractmethod
+    def closing(self, image, kernel_size=3, iterations=1):
+        pass

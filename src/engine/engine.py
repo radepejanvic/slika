@@ -50,6 +50,10 @@ class Engine:
                 return self.backend.erode(image, step.kernel_size, step.iterations)
             case "Dilate":
                 return self.backend.dilate(image, step.kernel_size, step.iterations)
+            case "Opening":
+                return self.backend.dilate(image, step.kernel_size, step.iterations)
+            case "Closing":
+                return self.backend.dilate(image, step.kernel_size, step.iterations)
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             
