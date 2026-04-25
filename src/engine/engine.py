@@ -46,6 +46,10 @@ class Engine:
                 return self.backend.cvt_color(image, step.code)
             case "Threshold": 
                 return self.backend.threshold(image, step.value, step.max_value, step.type)
+            case "Erode":
+                return self.backend.erode(image, step.kernel_size, step.iterations)
+            case "Dilate":
+                return self.backend.dilate(image, step.kernel_size, step.iterations)
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             

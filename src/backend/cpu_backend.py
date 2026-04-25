@@ -1,6 +1,7 @@
 from backend.base import Backend
 from backend.constants import *
 import cv2
+import numpy as np
 
 class OpenCVBackend(Backend):
     def load(self, path):
@@ -29,3 +30,11 @@ class OpenCVBackend(Backend):
         cv2_type = THRESHOLD_TYPES[type]
         _, th_img = cv2.threshold(image, value, max_value, cv2_type)
         return th_img
+
+    def erode(self, image, kernel_size=3, iterations=1):
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.erode(image, kernel, iterations=iterations)
+
+    def dilate(self, image, kernel_size=3, iterations=1):
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.dilate(image, kernel, iterations=iterations)

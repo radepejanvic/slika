@@ -29,7 +29,7 @@ Comment:
 ;
 
 Step:
-    SimpleStep | Resize | ConvertColor | Threshold
+    SimpleStep | Resize | ConvertColor | Threshold | Erode | Dilate
 ;
 
 SimpleStep: 
@@ -46,6 +46,14 @@ ConvertColor:
 
 Threshold: 
     'threshold' 'value=' value=INT ('max_value=' max_value=INT)? ('type=' type=ThresholdType)?
+;
+
+Erode:
+    'erode' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+;
+
+Dilate:
+    'dilate' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
 ;
 
 ColorConversionCode:

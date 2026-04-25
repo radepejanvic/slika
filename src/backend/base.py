@@ -21,3 +21,11 @@ class Backend(ABC):
     @abstractmethod
     def threshold(self, image, value, max_value=255, type='binary'):
         pass
+
+    @abstractmethod
+    def erode(self, image, kernel_size=3, iterations=1):
+        pass
+
+    @abstractmethod
+    def dilate(self, image, kernel_size=3, iterations=1):
+        pass
