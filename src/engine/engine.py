@@ -51,9 +51,11 @@ class Engine:
             case "Dilate":
                 return self.backend.dilate(image, step.kernel_size, step.iterations)
             case "Opening":
-                return self.backend.dilate(image, step.kernel_size, step.iterations)
+                return self.backend.opening(image, step.kernel_size, step.iterations)
             case "Closing":
-                return self.backend.dilate(image, step.kernel_size, step.iterations)
+                return self.backend.closing(image, step.kernel_size, step.iterations)
+            case "Canny":
+                return self.backend.canny(image, step.threshold1, step.threshold2)
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             

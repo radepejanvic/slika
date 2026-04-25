@@ -347,3 +347,25 @@ def test_pipeline_invalid_file(tmp_path):
     """
     with pytest.raises(RuntimeError):
         run_program(program, tmp_path)
+
+def test_pipeline_canny(tmp_path):
+    """Tests that canny edge detection produces a single channel binary-like image."""
+    input_path = create_test_image(tmp_path)
+    output_path = os.path.join(tmp_path, "output.png")
+
+    program = f"""
+        load "{input_path}" as Slika
+        pipeline Obrada {{
+            cvt_color code=bgr2gray
+            canny threshold1=100 threshold2=200
+        }}
+        apply Obrada to Slika
+        save Slika to "{output_path}"
+    """
+    run_program(program, tmp_path)
+
+    result = cv2.imread(output_path, cv2.IMREAD_GRAYSCALE)
+    assert result is not None
+    assert len(result.shape) == 2
+    unique_values = np.unique(result)
+    assert all(v in [0, 255] for v in unique_values)

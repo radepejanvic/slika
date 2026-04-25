@@ -37,3 +37,7 @@ class Backend(ABC):
     @abstractmethod
     def closing(self, image, kernel_size=3, iterations=1):
         pass
+
+    @abstractmethod
+    def canny(self, image, threshold1, threshold2):
+        pass
