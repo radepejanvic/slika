@@ -1,41 +1,6 @@
 from backend.base import Backend
+from backend.constants import *
 import cv2
-
-COLOR_CONVERSION_CODES = {
-    # RGB <-> BGR
-    'bgr2rgb':  cv2.COLOR_BGR2RGB,
-    'rgb2bgr':  cv2.COLOR_RGB2BGR,
-
-    # RGB <-> Gray
-    'rgb2gray': cv2.COLOR_RGB2GRAY,
-    'bgr2gray': cv2.COLOR_BGR2GRAY,
-    'gray2rgb': cv2.COLOR_GRAY2RGB,
-    'gray2bgr': cv2.COLOR_GRAY2BGR,
-    
-    # RGB <-> HSV
-    'bgr2hsv':  cv2.COLOR_BGR2HSV,
-    'rgb2hsv':  cv2.COLOR_RGB2HSV,
-    'hsv2bgr':  cv2.COLOR_HSV2BGR,
-    'hsv2rgb':  cv2.COLOR_HSV2RGB,
-
-    # RGB <-> HLS
-    'bgr2hls':  cv2.COLOR_BGR2HLS,
-    'rgb2hls':  cv2.COLOR_RGB2HLS,
-    'hls2bgr':  cv2.COLOR_HLS2BGR,
-    'hls2rgb':  cv2.COLOR_HLS2RGB,
-
-    # RGB <-> CIE L*a*b*
-    'bgr2lab':  cv2.COLOR_BGR2LAB,
-    'rgb2lab':  cv2.COLOR_RGB2LAB,
-    'lab2bgr':  cv2.COLOR_LAB2BGR,
-    'lab2rgb':  cv2.COLOR_LAB2RGB,
-
-    # RGB <-> CIE L*u*v*
-    'bgr2luv':  cv2.COLOR_BGR2LUV,
-    'rgb2luv':  cv2.COLOR_RGB2LUV,
-    'luv2bgr':  cv2.COLOR_LUV2BGR,
-    'luv2rgb':  cv2.COLOR_LUV2RGB,
-}
 
 class OpenCVBackend(Backend):
     def load(self, path):
@@ -51,6 +16,16 @@ class OpenCVBackend(Backend):
         if code not in COLOR_CONVERSION_CODES:
             raise ValueError(f'Unknown color conversion code: {code}') 
         
-        cv_code = COLOR_CONVERSION_CODES[code]
-        return cv2.cvtColor(image, cv_code)
-            
+        cv2_code = COLOR_CONVERSION_CODES[code]
+        return cv2.cvtColor(image, cv2_code)
+    
+    def threshold(self, image, value, max_value=255, type='binary'):
+        if len(image.shape) != 2:
+            raise ValueError('Threshold expects a grayscale image')
+        
+        if type not in THRESHOLD_TYPES:
+            raise ValueError(f'Unknown threshold type: {type}')
+        
+        cv2_type = THRESHOLD_TYPES[type]
+        _, th_img = cv2.threshold(image, value, max_value, cv2_type)
+        return th_img

@@ -29,7 +29,7 @@ Comment:
 ;
 
 Step:
-    SimpleStep | Resize | ConvertColor
+    SimpleStep | Resize | ConvertColor | Threshold
 ;
 
 SimpleStep: 
@@ -44,6 +44,10 @@ ConvertColor:
     'cvt_color' code=ColorConversionCode
 ;
 
+Threshold: 
+    'threshold' 'value=' value=INT ('max_value=' max_value=INT)? ('type=' type=ThresholdType)?
+;
+
 ColorConversionCode:
     'bgr2rgb' | 'rgb2bgr' | 
     'rgb2gray' | 'bgr2gray' | 'gray2rgb' | 'gray2bgr' |
@@ -52,3 +56,9 @@ ColorConversionCode:
     'bgr2lab' | 'rgb2lab' | 'lab2bgr' | 'lab2rgb' |
     'bgr2luv' | 'rgb2luv' | 'luv2bgr' | 'luv2rgb'
 ;
+
+ThresholdType: 
+    'binary' | 'binary_inv' | 'trunc' | 'tozero' | 'tozero_inv' | 
+    'mask' | 'otsu' | 'triangle' | 'dryrun'
+;
+

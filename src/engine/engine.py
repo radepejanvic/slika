@@ -44,6 +44,8 @@ class Engine:
                 return self.backend.resize(image, step.width, step.height)
             case "ConvertColor":
                 return self.backend.cvt_color(image, step.code)
+            case "Threshold": 
+                return self.backend.threshold(image, step.value, step.max_value, step.type)
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             

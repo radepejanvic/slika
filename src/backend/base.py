@@ -17,3 +17,7 @@ class Backend(ABC):
     @abstractmethod
     def cvt_color(self, image, code):
         pass
+
+    @abstractmethod
+    def threshold(self, image, value, max_value=255, type='binary'):
+        pass
