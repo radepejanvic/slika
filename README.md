@@ -37,6 +37,12 @@ uv run slika examples/dummy.sl
 slika examples/dummy.sl
 ```
 
+### Running tests
+
+```bash
+uv run pytest .\tests
+```
+
 ### Adding dependencies
 
 ```bash
