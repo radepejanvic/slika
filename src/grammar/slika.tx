@@ -29,13 +29,64 @@ Comment:
 ;
 
 Step:
-    SimpleStep | Resize 
+    SimpleStep | Resize | Crop | ConvertColor |
+    Threshold | Erode | Dilate | Opening |
+    Closing | Canny
 ;
 
 SimpleStep: 
-    op='grayscale'
+    op='dummy'
 ;
 
 Resize:
     'resize' 'width=' width=INT 'height=' height=INT
 ;
+
+
+Crop:
+    'crop' 'x=' x=INT 'y=' y=INT 'width=' width=INT 'height=' height=INT
+;
+
+
+ConvertColor:
+    'cvt_color' 'code=' code=ColorConversionCode
+;
+
+Threshold: 
+    'threshold' 'value=' value=INT ('max_value=' max_value=INT)? ('type=' type=ThresholdType)?
+;
+
+Erode:
+    'erode' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+;
+
+Dilate:
+    'dilate' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+;
+
+Opening:
+    'opening' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+;
+
+Closing:
+    'closing' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+;
+
+Canny:
+    'canny' 'threshold1=' threshold1=INT 'threshold2=' threshold2=INT
+;
+
+ColorConversionCode:
+    'bgr2rgb' | 'rgb2bgr' | 
+    'rgb2gray' | 'bgr2gray' | 'gray2rgb' | 'gray2bgr' |
+    'bgr2hsv' | 'rgb2hsv' | 'hsv2bgr' | 'hsv2rgb' |
+    'bgr2hls' | 'rgb2hls' | 'hls2bgr' | 'hls2rgb' |
+    'bgr2lab' | 'rgb2lab' | 'lab2bgr' | 'lab2rgb' |
+    'bgr2luv' | 'rgb2luv' | 'luv2bgr' | 'luv2rgb'
+;
+
+ThresholdType: 
+    'binary' | 'binary_inv' | 'trunc' | 'tozero' | 'tozero_inv' | 
+    'mask' | 'otsu' | 'triangle' | 'dryrun'
+;
+
