@@ -12,4 +12,4 @@ pipeline DummyPipeline {
 
 apply DummyPipeline to DummyImage
 
-save DummyImage to "./examplCes/out.png"
+save DummyImage to "./examples/out.png"
