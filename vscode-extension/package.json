@@ -12,10 +12,17 @@
   "contributes": {
     "languages": [{
       "id": "slika",
-      "extensions": [
-        ".sl"
-      ],
-      "configuration": "./language-configuration.json"
+      "extensions": [".sl"],
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./icons/slika-file.svg",
+        "dark": "./icons/slika-file.svg"
+      }
+    }],
+    "grammars": [{
+      "language": "slika",
+      "scopeName": "source.slika",
+      "path": "./syntaxes/slika.tmLanguage.json"
     }]
   },
   "keywords": [],
