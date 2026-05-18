@@ -1,7 +1,10 @@
+import pkgutil
+import importlib
+
 from pygls.lsp.server import LanguageServer
 
-from . import diagnostics
-
-
 def register_all(server: LanguageServer):
-    diagnostics.register(server)
+    for _, name, _ in pkgutil.iter_modules(__path__):
+        module = importlib.import_module(f'.{name}', package=__name__)
+        if hasattr(module, 'register'):
+            module.register(server)
