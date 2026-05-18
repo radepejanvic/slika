@@ -43,10 +43,9 @@ const vscode = __importStar(require("vscode"));
 const node_1 = require("vscode-languageclient/node");
 let client;
 function activate(context) {
-    const lspPath = path_1.default.join(context.extensionPath, '..', 'src', 'lsp.py');
     const serverOptions = {
         command: '/home/trajcex/Desktop/slika/.venv/bin/python',
-        args: [lspPath],
+        args: ['-m', 'src.lsp'],
         options: {
             cwd: path_1.default.join(context.extensionPath, '..')
         },

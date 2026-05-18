@@ -5,11 +5,9 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
-    const lspPath = path.join(context.extensionPath, '..', 'src', 'lsp.py');
-    
     const serverOptions: ServerOptions = {
         command: '/home/trajcex/Desktop/slika/.venv/bin/python',
-        args: [lspPath],
+        args: ['-m', 'src.lsp'],
         options: {
             cwd: path.join(context.extensionPath, '..')
         },
