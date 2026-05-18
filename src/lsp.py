@@ -10,6 +10,14 @@ from lsprotocol.types import (
     Range,
 )
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
+import sys
+import os
+import logging
+
+logging.basicConfig(filename='/tmp/slika-lsp.log', level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
+log = logging.getLogger(__name__)
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.grammar import get_metamodel
 from lsprotocol.types import PublishDiagnosticsParams
 
@@ -50,8 +58,9 @@ def did_open(ls: LanguageServer, params: DidOpenTextDocumentParams):
 
 @server.feature(TEXT_DOCUMENT_DID_CHANGE)
 def did_change(ls: LanguageServer, params: DidChangeTextDocumentParams):
-    text = params.content_changes[-1].text
-    validate(ls, params.text_document.uri, text)
+    document = ls.workspace.get_text_document(params.text_document.uri)
+    log.debug("did_change — full text (%d chars):\n%s", len(document.source), document.source)
+    validate(ls, params.text_document.uri, document.source)
 
 def main():
     server.start_io()
