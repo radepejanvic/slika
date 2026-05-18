@@ -1,0 +1,32 @@
+{
+  "name": "slika-lang",
+  "displayName": "Slika DSL",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {"vscode": "^1.75.0"},
+  "activationEvents": ["onLanguage:slika"],
+  "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./"
+  },
+  "contributes": {
+    "languages": [{
+      "id": "slika",
+      "extensions": [
+        ".sl"
+      ],
+      "configuration": "./language-configuration.json"
+    }]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  }
+}
