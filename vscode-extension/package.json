@@ -15,8 +15,8 @@
       "extensions": [".sl"],
       "configuration": "./language-configuration.json",
       "icon": {
-        "light": "./icons/slika-file-camera.svg",
-        "dark": "./icons/slika-file-camera.svg"
+        "light": "./icons/slika-file.svg",
+        "dark": "./icons/slika-file.svg"
       }
     }],
     "grammars": [{
