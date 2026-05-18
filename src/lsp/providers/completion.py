@@ -5,9 +5,10 @@ from lsprotocol.types import (
     CompletionParams,
     CompletionList,
     CompletionItem,
-    CompletionItemKind
+    CompletionItemKind,
 )
 from completion_data.keywords import *
+from completion_data.snippets import SNIPPETS
 
 def register(server: LanguageServer):
     @server.feature(TEXT_DOCUMENT_COMPLETION)
@@ -28,6 +29,8 @@ def register(server: LanguageServer):
         )
         return CompletionList(is_incomplete=False, items=items)
 
+# TODO: add file path completion for load and save - detect when cursor is
+# inside a string after 'load' or 'save' and list files using os.listdir()
 def _resolve_items(last, text_before, step, inside_pipeline, pipelines, images):
     if last == 'apply':
         return _items(pipelines, CompletionItemKind.Variable)
@@ -41,7 +44,7 @@ def _resolve_items(last, text_before, step, inside_pipeline, pipelines, images):
         return _items(STEP_PARAMS[step], CompletionItemKind.Field)
     if inside_pipeline:
         return _items(STEP_KEYWORDS, CompletionItemKind.Keyword)
-    return _items(TOP_LEVEL_KEYWORDS, CompletionItemKind.Keyword)
+    return _items(TOP_LEVEL_KEYWORDS, CompletionItemKind.Keyword) + SNIPPETS
 
     
 def _text_before_cursor(lines: list[str], position)-> str:
