@@ -86,4 +86,5 @@ class OpenCLBackend(Backend):
         return cv2.morphologyEx(gpu, cv2.MORPH_CLOSE, kernel, iterations=iterations)
 
     def canny(self, image, threshold1, threshold2):
-        pass
+        gpu = self._ensure_gpu(image)
+        return cv2.Canny(gpu, threshold1, threshold2)
