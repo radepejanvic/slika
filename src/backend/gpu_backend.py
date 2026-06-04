@@ -1,6 +1,7 @@
 from backend.base import Backend
 from backend.constants import *
 import cv2
+import numpy as np;
 
 class OpenCLBackend(Backend):
 
@@ -65,16 +66,24 @@ class OpenCLBackend(Backend):
         return th_img
 
     def erode(self, image, kernel_size=3, iterations=1):
-        pass
+        gpu = self._ensure_gpu(image)
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.erode(gpu, kernel, iterations=iterations)
 
     def dilate(self, image, kernel_size=3, iterations=1):
-        pass
+        gpu = self._ensure_gpu(image)
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.dilate(gpu, kernel, iterations=iterations)
 
     def opening(self, image, kernel_size=3, iterations=1):
-        pass
+        gpu = self._ensure_gpu(image)
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.morphologyEx(gpu, cv2.MORPH_OPEN, kernel, iterations=iterations)
 
     def closing(self, image, kernel_size=3, iterations=1):
-        pass
+        gpu = self._ensure_gpu(image)
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        return cv2.morphologyEx(gpu, cv2.MORPH_CLOSE, kernel, iterations=iterations)
 
     def canny(self, image, threshold1, threshold2):
         pass
