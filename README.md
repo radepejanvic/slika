@@ -1,6 +1,26 @@
 # slika
 Image processing DSL
 
+## VSCode Extension
+
+The extension provides syntax highlighting and LSP support for `.sl` files.
+
+### Requirements
+
+- VSCode 1.75+
+- Python virtual environment set up at `.venv/` in the project root (see [Setup](#setup))
+
+### Installation
+
+1. Open VSCode
+2. Open the Command Palette (`Ctrl+Shift+P`)
+3. Run `Extensions: Install from VSIX...`
+4. Select `vscode-extension/slika-lang-1.0.0.vsix`
+
+When you open a `.sl` file the extension automatically starts the Slika language server using the `.venv` Python environment. Make sure `uv sync` has been run before using the extension.
+
+---
+
 ## Development
 
 ### Prerequisites

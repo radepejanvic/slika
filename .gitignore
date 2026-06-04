@@ -177,3 +177,6 @@ pyrightconfig.json
 
 env
 *.png
+
+node_modules
+vscode-extension/out/

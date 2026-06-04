@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Slika",
+  "scopeName": "source.slika",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#keywords" },
+    { "include": "#steps" },
+    { "include": "#params" },
+    { "include": "#enums" },
+    { "include": "#strings" },
+    { "include": "#numbers" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "\\/\\/.*$",
+      "name": "comment.line.double-slash.slika"
+    },
+    "keywords": {
+      "match": "\\b(load|pipeline|apply|save|as|to)\\b",
+      "name": "keyword.control.slika"
+    },
+    "steps": {
+      "match": "\\b(resize|crop|cvt_color|threshold|erode|dilate|opening|closing|canny)\\b",
+      "name": "entity.name.function.slika"
+    },
+    "params": {
+      "match": "\\b(width|height|x|y|code|value|max_value|type|kernel_size|iterations|threshold1|threshold2)=",
+      "name": "variable.parameter.slika"
+    },
+    "enums": {
+      "match": "\\b(bgr2rgb|rgb2bgr|rgb2gray|bgr2gray|gray2rgb|gray2bgr|bgr2hsv|rgb2hsv|hsv2bgr|hsv2rgb|bgr2hls|rgb2hls|hls2bgr|hls2rgb|bgr2lab|rgb2lab|lab2bgr|lab2rgb|bgr2luv|rgb2luv|luv2bgr|luv2rgb|binary|binary_inv|trunc|tozero|tozero_inv|mask|otsu|triangle|dryrun)\\b",
+      "name": "constant.language.slika"
+    },
+    "strings": {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.single.slika"
+    },
+    "numbers": {
+      "match": "\\b[0-9]+\\b",
+      "name": "constant.numeric.slika"
+    }
+  }
+}
