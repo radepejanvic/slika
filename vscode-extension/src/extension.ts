@@ -5,11 +5,12 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
+    const projectRoot = path.join(context.extensionPath, '..');
     const serverOptions: ServerOptions = {
-        command: '/home/trajcex/Desktop/slika/.venv/bin/python',
+        command: path.join(projectRoot, '.venv', 'bin', 'python'),
         args: ['-m', 'src.lsp'],
         options: {
-            cwd: path.join(context.extensionPath, '..')
+            cwd: projectRoot
         },
         transport: TransportKind.stdio
     };
