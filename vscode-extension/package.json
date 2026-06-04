@@ -26,7 +26,12 @@
     }]
   },
   "keywords": [],
-  "author": "",
+  "publisher": "trajcex",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/radepejanvic/slika"
+  },
+  "author": "trajcex",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.19.130",
