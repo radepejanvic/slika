@@ -46,13 +46,23 @@ class OpenCLBackend(Backend):
         return cv2.UMat(cropped)
 
     def grayscale(self, image):
-        pass
+        gpu = self._ensure_gpu(image)
+        return cv2.cvtColor(gpu, cv2.COLOR_BGR2GRAY)
 
     def cvt_color(self, image, code):
-        pass
+        if code not in COLOR_CONVERSION_CODES:
+            raise ValueError(f'Unknown color conversion code: {code}')
+        gpu = self._ensure_gpu(image)
+        cv2_code = COLOR_CONVERSION_CODES[code]
+        return cv2.cvtColor(gpu, cv2_code)
 
     def threshold(self, image, value, max_value=255, type='binary'):
-        pass
+        if type not in THRESHOLD_TYPES:
+            raise ValueError(f'Unknown threshold type: {type}')
+        gpu = self._ensure_gpu(image)
+        cv2_type = THRESHOLD_TYPES[type]
+        _, th_img = cv2.threshold(gpu, value, max_value, cv2_type)
+        return th_img
 
     def erode(self, image, kernel_size=3, iterations=1):
         pass
