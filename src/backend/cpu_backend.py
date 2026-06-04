@@ -21,6 +21,11 @@ class OpenCVBackend(Backend):
 
         return image[y:y_end, x:x_end]
     
+    def grayscale(self, image):
+        if len(image.shape) == 2:
+            return image
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
     def cvt_color(self, image, code):
         if code not in COLOR_CONVERSION_CODES:
             raise ValueError(f'Unknown color conversion code: {code}') 
