@@ -1,4 +1,5 @@
 from engine.context import Context
+from engine.media import ImageMedia
 
 class Engine:
     def __init__(self, backend):
@@ -23,17 +24,15 @@ class Engine:
         image = self.backend.load(stmt.path)
         if image is None:
           raise RuntimeError(f"Couldn't load resource: '{stmt.path}' ")
-        self.context.store(stmt.name, image)
+        self.context.store(stmt.name, ImageMedia(image))
 
     def execute_save(self, stmt): 
-        image = self.context.get(stmt.image.name)
-        self.backend.save(image, stmt.path)
+        media = self.context.get(stmt.image.name)
+        media.save(self.backend, stmt.path) 
 
     def execute_apply(self, stmt):
-        image = self.context.get(stmt.image.name)
-        for step in stmt.pipeline.steps:
-            image = self.execute_step(step, image)
-        self.context.store(stmt.image.name, image)
+        media = self.context.get(stmt.image.name)
+        media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
 
     def execute_step(self, step, image):
         class_name = step.__class__.__name__
@@ -67,3 +66,8 @@ class Engine:
                 return self.backend.grayscale(image)
             case _:
                 raise RuntimeError(f"Unknown simple step: {step.op}")
+            
+    def apply_pipeline(self, pipeline, frame):
+        for step in pipeline.steps:
+            frame = self.execute_step(step, frame)
+        return frame
