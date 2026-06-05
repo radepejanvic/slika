@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
+
 
 class Media(ABC):
 

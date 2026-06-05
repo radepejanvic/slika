@@ -1,5 +1,6 @@
+import os
 from engine.context import Context
-from engine.media import ImageMedia
+from engine.media import ImageMedia, IMAGE_EXTENSIONS
 
 class Engine:
     def __init__(self, backend):
@@ -20,11 +21,18 @@ class Engine:
             case "Save":
                 self.execute_save(stmt)
 
-    def execute_load(self, stmt): 
-        image = self.backend.load(stmt.path)
-        if image is None:
-          raise RuntimeError(f"Couldn't load resource: '{stmt.path}' ")
-        self.context.store(stmt.name, ImageMedia(image))
+    def execute_load(self, stmt):
+        media = self.load_file(stmt.path)
+        self.context.store(stmt.name, media)
+
+    def load_file(self, path):
+        ext = os.path.splitext(path)[1].lower()
+        if ext in IMAGE_EXTENSIONS:
+            image = self.backend.load(path)
+            if image is None:
+                raise RuntimeError(f"Couldn't load image: '{path}'")
+            return ImageMedia(image)
+        raise RuntimeError(f"Unsupported file type: '{path}'")
 
     def execute_save(self, stmt): 
         media = self.context.get(stmt.image.name)
