@@ -1,6 +1,9 @@
 import os
 from engine.context import Context
-from engine.media import ImageMedia,VideoMedia, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS
+from engine.media import (
+    ImageMedia, VideoMedia, MediaCollection,
+    IMAGE_EXTENSIONS, VIDEO_EXTENSIONS,
+)
 
 class Engine:
     def __init__(self, backend):
@@ -22,8 +25,26 @@ class Engine:
                 self.execute_save(stmt)
 
     def execute_load(self, stmt):
-        media = self.load_file(stmt.path)
+        media = self.load_media(stmt.path)
         self.context.store(stmt.name, media)
+
+    def load_media(self, path):
+        if os.path.isdir(path):
+            return self.load_folder(path)
+        return self.load_file(path)
+
+    def load_folder(self, path):
+        items = []
+        for entry in sorted(os.listdir(path)):
+            full = os.path.join(path, entry)
+            if not os.path.isfile(full):
+                continue
+            ext = os.path.splitext(entry)[1].lower()
+            if ext in IMAGE_EXTENSIONS or ext in VIDEO_EXTENSIONS:
+                items.append((entry, self.load_file(full)))
+        if not items:
+            raise RuntimeError(f"No supported media files in folder: '{path}'")
+        return MediaCollection(items)
 
     def load_file(self, path):
         ext = os.path.splitext(path)[1].lower()

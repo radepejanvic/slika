@@ -1,7 +1,9 @@
+import os
 from abc import ABC, abstractmethod
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+
 
 class Media(ABC):
 
@@ -37,3 +39,20 @@ class VideoMedia(Media):
 
     def save(self, backend, path):
         backend.save_video(self.frames, path, self.fps)
+
+
+class MediaCollection(Media):
+
+    def __init__(self, items):
+        # items: list[(filename, Media)]
+        self.items = items
+
+    def map(self, fn):
+        for _, media in self.items:
+            media.map(fn)
+        return self
+
+    def save(self, backend, path):
+        os.makedirs(path, exist_ok=True)
+        for filename, media in self.items:
+            media.save(backend, os.path.join(path, filename))
