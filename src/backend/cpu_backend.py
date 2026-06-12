@@ -7,6 +7,24 @@ class OpenCVBackend(Backend):
     def load(self, path):
         return cv2.imread(path)
     
+    def load_video(self, path):
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise RuntimeError(f"Couldn't open video: '{path}'")
+
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        frames = []
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            frames.append(frame)
+        cap.release()
+
+        if not frames:
+            raise RuntimeError(f"No frames read from video: '{path}'")
+        return frames, fps
+    
     def save(self, image, path):
         return cv2.imwrite(path, image)
     
