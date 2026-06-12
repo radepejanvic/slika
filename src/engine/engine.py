@@ -1,6 +1,6 @@
 import os
 from engine.context import Context
-from engine.media import ImageMedia, IMAGE_EXTENSIONS
+from engine.media import ImageMedia,VideoMedia, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS
 
 class Engine:
     def __init__(self, backend):
@@ -32,6 +32,9 @@ class Engine:
             if image is None:
                 raise RuntimeError(f"Couldn't load image: '{path}'")
             return ImageMedia(image)
+        if ext in VIDEO_EXTENSIONS:
+            frames, fps = self.backend.load_video(path)
+            return VideoMedia(frames, fps)
         raise RuntimeError(f"Unsupported file type: '{path}'")
 
     def execute_save(self, stmt): 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
-
+VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 
 class Media(ABC):
 
@@ -24,3 +24,16 @@ class ImageMedia(Media):
 
     def save(self, backend, path):
         backend.save(self.frame, path)
+
+
+class VideoMedia(Media):
+    def __init__(self, frames, fps):
+        self.frames = frames
+        self.fps = fps
+
+    def map(self, fn):
+        self.frames = [fn(frame) for frame in self.frames]
+        return self
+
+    def save(self, backend, path):
+        backend.save_video(self.frames, path, self.fps)
