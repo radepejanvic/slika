@@ -28,6 +28,14 @@ class OpenCVBackend(Backend):
     def save(self, image, path):
         return cv2.imwrite(path, image)
     
+    def save_video(self, frames, path, fps):
+        height, width = frames[0].shape[:2]
+        four_character_code = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
+        writer = cv2.VideoWriter(path, four_character_code, fps, (width, height))
+        for frame in frames:
+            writer.write(frame)
+        writer.release()
+
     def resize(self, image, width, height):
         return cv2.resize(image, (width, height))
 
