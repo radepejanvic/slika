@@ -49,3 +49,12 @@ class Backend(ABC):
     @abstractmethod
     def canny(self, image, threshold1, threshold2):
         pass
+
+    @abstractmethod
+    def load_video(self, path):
+        pass
+
+    @abstractmethod
+    def save_video(self, frames, path, fps):
+        pass
+    

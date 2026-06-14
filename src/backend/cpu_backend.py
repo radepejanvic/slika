@@ -2,14 +2,51 @@ from backend.base import Backend
 from backend.constants import *
 import cv2
 import numpy as np
+import os
 
 class OpenCVBackend(Backend):
     def load(self, path):
         return cv2.imread(path)
     
+    def load_video(self, path):
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise RuntimeError(f"Couldn't open video: '{path}'")
+
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        if fps <= 0:
+            fps = 30.0
+        frames = []
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            frames.append(frame)
+        cap.release()
+
+        if not frames:
+            raise RuntimeError(f"No frames read from video: '{path}'")
+        return frames, fps
+    
     def save(self, image, path):
         return cv2.imwrite(path, image)
     
+    def save_video(self, frames, path, fps):
+        first = frames[0]
+        is_color = first.ndim == 3
+        height, width = first.shape[:2]
+
+        ext = os.path.splitext(path)[1].lower()
+        fourcc = VIDEO_FOURCC.get(ext, DEFAULT_FOURCC)
+        writer = cv2.VideoWriter(path, fourcc, fps, (width, height), isColor=is_color)
+        
+        if not writer.isOpened():
+            raise RuntimeError(f"Couldn't open VideoWriter for: '{path}'")
+        
+        for frame in frames:
+            writer.write(frame)
+        writer.release()
+
     def resize(self, image, width, height):
         return cv2.resize(image, (width, height))
 

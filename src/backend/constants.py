@@ -47,3 +47,13 @@ THRESHOLD_TYPES = {
     'triangle':   cv2.THRESH_TRIANGLE, 
     'dryrun':     cv2.THRESH_TRIANGLE, 
 }
+
+VIDEO_FOURCC = {
+    '.mp4':  cv2.VideoWriter_fourcc(*'mp4v'),
+    '.avi':  cv2.VideoWriter_fourcc(*'XVID'),
+    '.mov':  cv2.VideoWriter_fourcc(*'mp4v'),
+    '.mkv':  cv2.VideoWriter_fourcc(*'mp4v'),
+    '.webm': cv2.VideoWriter_fourcc(*'VP80'),
+}
+
+DEFAULT_FOURCC = cv2.VideoWriter_fourcc(*'mp4v')

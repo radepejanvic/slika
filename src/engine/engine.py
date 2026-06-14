@@ -1,4 +1,9 @@
+import os
 from engine.context import Context
+from engine.media import (
+    ImageMedia, VideoMedia, MediaCollection,
+    IMAGE_EXTENSIONS, VIDEO_EXTENSIONS,
+)
 
 class Engine:
     def __init__(self, backend):
@@ -19,21 +24,51 @@ class Engine:
             case "Save":
                 self.execute_save(stmt)
 
-    def execute_load(self, stmt): 
-        image = self.backend.load(stmt.path)
-        if image is None:
-          raise RuntimeError(f"Couldn't load resource: '{stmt.path}' ")
-        self.context.store(stmt.name, image)
+    def execute_load(self, stmt):
+        media = self.load_media(stmt.path)
+        self.context.store(stmt.name, media)
+
+    def load_media(self, path):
+        if os.path.isdir(path):
+            collection = self.load_folder(path)
+            if not collection.items:
+                raise RuntimeError(f"No supported media files in folder: '{path}'")
+            return collection
+        return self.load_file(path)
+    
+    def load_folder(self, path):
+        items = []
+        for entry in sorted(os.listdir(path)):
+            full = os.path.join(path, entry)
+            if os.path.isdir(full):
+                sub = self.load_folder(full)
+                if sub.items:
+                    items.append((entry, sub))
+                continue
+            ext = os.path.splitext(entry)[1].lower()
+            if ext in IMAGE_EXTENSIONS or ext in VIDEO_EXTENSIONS:
+                items.append((entry, self.load_file(full)))
+        return MediaCollection(items)
+
+    def load_file(self, path):
+        ext = os.path.splitext(path)[1].lower()
+        if ext in IMAGE_EXTENSIONS:
+            image = self.backend.load(path)
+            if image is None:
+                raise RuntimeError(f"Couldn't load image: '{path}'")
+            return ImageMedia(image)
+        if ext in VIDEO_EXTENSIONS:
+            frames, fps = self.backend.load_video(path)
+            return VideoMedia(frames, fps)
+        raise RuntimeError(f"Unsupported file type: '{path}'")
 
     def execute_save(self, stmt): 
-        image = self.context.get(stmt.image.name)
-        self.backend.save(image, stmt.path)
+        media = self.context.get(stmt.image.name)
+        media.save(self.backend, stmt.path) 
 
     def execute_apply(self, stmt):
-        image = self.context.get(stmt.image.name)
-        for step in stmt.pipeline.steps:
-            image = self.execute_step(step, image)
-        self.context.store(stmt.image.name, image)
+        media = self.context.get(stmt.image.name)
+        media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
 
     def execute_step(self, step, image):
         class_name = step.__class__.__name__
@@ -67,3 +102,8 @@ class Engine:
                 return self.backend.grayscale(image)
             case _:
                 raise RuntimeError(f"Unknown simple step: {step.op}")
+            
+    def apply_pipeline(self, pipeline, frame):
+        for step in pipeline.steps:
+            frame = self.execute_step(step, frame)
+        return frame

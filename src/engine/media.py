@@ -1,0 +1,59 @@
+import os
+from abc import ABC, abstractmethod
+
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
+VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+
+
+class Media(ABC):
+
+    @abstractmethod
+    def map(self, fn):
+        ...
+
+    @abstractmethod
+    def save(self, backend, path):
+        ...
+
+
+class ImageMedia(Media):
+    def __init__(self, frame):
+        self.frame = frame
+
+    def map(self, fn):
+        self.frame = fn(self.frame)
+        return self
+
+    def save(self, backend, path):
+        if not backend.save(self.frame, path):
+            raise RuntimeError(f"Couldn't save image to: '{path}'")
+
+
+class VideoMedia(Media):
+    def __init__(self, frames, fps):
+        self.frames = frames
+        self.fps = fps
+
+    def map(self, fn):
+        self.frames = [fn(frame) for frame in self.frames]
+        return self
+
+    def save(self, backend, path):
+        backend.save_video(self.frames, path, self.fps)
+
+
+class MediaCollection(Media):
+
+    def __init__(self, items):
+        # items: list[(filename, Media)]
+        self.items = items
+
+    def map(self, fn):
+        for _, media in self.items:
+            media.map(fn)
+        return self
+
+    def save(self, backend, path):
+        os.makedirs(path, exist_ok=True)
+        for filename, media in self.items:
+            media.save(backend, os.path.join(path, filename))
