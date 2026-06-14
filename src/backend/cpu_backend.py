@@ -29,9 +29,11 @@ class OpenCVBackend(Backend):
         return cv2.imwrite(path, image)
     
     def save_video(self, frames, path, fps):
-        height, width = frames[0].shape[:2]
+        first = frames[0]
+        is_color = first.ndim == 3
+        height, width = first.shape[:2]
         four_character_code = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
-        writer = cv2.VideoWriter(path, four_character_code, fps, (width, height))
+        writer = cv2.VideoWriter(path, four_character_code, fps, (width, height), isColor=is_color)
         for frame in frames:
             writer.write(frame)
         writer.release()
