@@ -1,5 +1,6 @@
 from backend.base import Backend
 from backend.constants import *
+from backend.video_io import read_video, write_video
 import cv2
 import numpy as np;
 
@@ -33,6 +34,12 @@ class OpenCLBackend(Backend):
     def save(self, image, path):
         cpu_img = self._ensure_cpu(image)
         return cv2.imwrite(path, cpu_img)
+    
+    def load_video(self, path):
+        return read_video(path, wrap=self._ensure_gpu)
+
+    def save_video(self, frames, path, fps):
+        write_video(frames, path, fps, unwrap=self._ensure_cpu)
 
     def resize(self, image, width, height):
         gpu = self._ensure_gpu(image)
@@ -88,3 +95,9 @@ class OpenCLBackend(Backend):
     def canny(self, image, threshold1, threshold2):
         gpu = self._ensure_gpu(image)
         return cv2.Canny(gpu, threshold1, threshold2)
+    
+    def _wrap_frame(self, frame):
+        return self._ensure_gpu(frame)
+    
+    def _unwrap_frame(self, frame):
+        return self._ensure_cpu(frame)
