@@ -30,20 +30,24 @@ class Engine:
 
     def load_media(self, path):
         if os.path.isdir(path):
-            return self.load_folder(path)
+            collection = self.load_folder(path)
+            if not collection.items:
+                raise RuntimeError(f"No supported media files in folder: '{path}'")
+            return collection
         return self.load_file(path)
-
+    
     def load_folder(self, path):
         items = []
         for entry in sorted(os.listdir(path)):
             full = os.path.join(path, entry)
-            if not os.path.isfile(full):
+            if os.path.isdir(full):
+                sub = self.load_folder(full)
+                if sub.items:
+                    items.append((entry, sub))
                 continue
             ext = os.path.splitext(entry)[1].lower()
             if ext in IMAGE_EXTENSIONS or ext in VIDEO_EXTENSIONS:
                 items.append((entry, self.load_file(full)))
-        if not items:
-            raise RuntimeError(f"No supported media files in folder: '{path}'")
         return MediaCollection(items)
 
     def load_file(self, path):
