@@ -25,7 +25,8 @@ class ImageMedia(Media):
         return self
 
     def save(self, backend, path):
-        backend.save(self.frame, path)
+        if not backend.save(self.frame, path):
+            raise RuntimeError(f"Couldn't save image to: '{path}'")
 
 
 class VideoMedia(Media):
