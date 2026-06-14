@@ -33,3 +33,6 @@ slika-ls = "src.lsp:main"
 
 [project.entry-points."textx_languages"]
 slika = "src.grammar:slika_language"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
