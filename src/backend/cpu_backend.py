@@ -2,6 +2,7 @@ from backend.base import Backend
 from backend.constants import *
 import cv2
 import numpy as np
+import os
 
 class OpenCVBackend(Backend):
     def load(self, path):
@@ -13,6 +14,8 @@ class OpenCVBackend(Backend):
             raise RuntimeError(f"Couldn't open video: '{path}'")
 
         fps = cap.get(cv2.CAP_PROP_FPS)
+        if fps <= 0:
+            fps = 30.0
         frames = []
         while True:
             ok, frame = cap.read()
@@ -32,8 +35,14 @@ class OpenCVBackend(Backend):
         first = frames[0]
         is_color = first.ndim == 3
         height, width = first.shape[:2]
-        four_character_code = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
-        writer = cv2.VideoWriter(path, four_character_code, fps, (width, height), isColor=is_color)
+
+        ext = os.path.splitext(path)[1].lower()
+        fourcc = VIDEO_FOURCC.get(ext, DEFAULT_FOURCC)
+        writer = cv2.VideoWriter(path, fourcc, fps, (width, height), isColor=is_color)
+        
+        if not writer.isOpened():
+            raise RuntimeError(f"Couldn't open VideoWriter for: '{path}'")
+        
         for frame in frames:
             writer.write(frame)
         writer.release()
