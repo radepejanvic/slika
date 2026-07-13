@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
+let backendStatusBar: vscode.StatusBarItem;
+let currentBackend: string = 'cpu';
 
 export function activate(context: vscode.ExtensionContext) {
     const projectRoot = path.join(context.extensionPath, '..');
@@ -43,11 +45,46 @@ export function activate(context: vscode.ExtensionContext) {
         editor.document.save().then(() => {
             const terminal = vscode.window.createTerminal('Slika');
             terminal.show();
-            terminal.sendText(`slika "${filePath}"`);
+            terminal.sendText(`slika "${filePath}" --backend ${currentBackend}`);
         });
     });
 
     context.subscriptions.push(runCommand);
+
+    backendStatusBar = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Right, 100
+    );
+    backendStatusBar.command = 'slika.selectBackend';
+    backendStatusBar.tooltip = 'Select Slika processing backend';
+    updateStatusBar();
+    backendStatusBar.show();
+    context.subscriptions.push(backendStatusBar);
+
+    const selectBackendCommand = vscode.commands.registerCommand('slika.selectBackend', async () => {
+        const pick = await vscode.window.showQuickPick(
+            [
+                { label: '$(cpu) CPU',  description: 'OpenCV (default)', value: 'cpu'  },
+                { label: '$(rocket) GPU',  description: 'OpenCL accelerated', value: 'gpu'  },
+                { label: '$(sync) Auto', description: 'Detect automatically', value: 'auto' },
+            ],
+            { placeHolder: 'Select processing backend' }
+        );
+        if (pick) {
+            currentBackend = pick.value;
+            updateStatusBar();
+        }
+    });
+
+    context.subscriptions.push(selectBackendCommand);
+}
+
+function updateStatusBar() {
+    const icons: Record<string, string> = {
+        'cpu': '$(cpu)',
+        'gpu': '$(rocket)',
+        'auto': '$(sync)',
+    };
+    backendStatusBar.text = `${icons[currentBackend] || ''} Slika: ${currentBackend.toUpperCase()}`;
 }
 
 

@@ -34,6 +34,11 @@
         "title": "Run Slika File",
         "category": "Slika",
         "icon": "$(play)"
+      },
+      {
+        "command": "slika.selectBackend",
+        "title": "Select Backend",
+        "category": "Slika"
       }
     ],
     "menus": {
