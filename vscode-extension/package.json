@@ -23,7 +23,58 @@
       "language": "slika",
       "scopeName": "source.slika",
       "path": "./syntaxes/slika.tmLanguage.json"
-    }]
+    }],
+    "snippets": [{
+      "language": "slika",
+      "path": "./snippets/slika.json"
+    }],
+    "commands": [
+      {
+        "command": "slika.run",
+        "title": "Run Slika File",
+        "category": "Slika",
+        "icon": "$(play)"
+      },
+      {
+        "command": "slika.selectBackend",
+        "title": "Select Backend",
+        "category": "Slika"
+      },
+      {
+        "command": "slika.preview",
+        "title": "Preview Output Image",
+        "category": "Slika",
+        "icon": "$(eye)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "slika.run",
+          "when": "resourceLangId == slika",
+          "group": "navigation"
+        },
+        {
+          "command": "slika.preview",
+          "when": "resourceLangId == slika",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "slika.run",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "resourceLangId == slika"
+      },
+      {
+        "command": "slika.preview",
+        "key": "ctrl+shift+p",
+        "mac": "cmd+shift+p",
+        "when": "resourceLangId == slika"
+      }
+    ]
   },
   "keywords": [],
   "publisher": "trajcex",

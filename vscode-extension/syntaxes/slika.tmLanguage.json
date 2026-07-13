@@ -9,7 +9,9 @@
     { "include": "#params" },
     { "include": "#enums" },
     { "include": "#strings" },
-    { "include": "#numbers" }
+    { "include": "#strings_double" },
+    { "include": "#numbers" },
+    { "include": "#identifiers" }
   ],
   "repository": {
     "comments": {
@@ -37,9 +39,18 @@
       "end": "'",
       "name": "string.quoted.single.slika"
     },
+    "strings_double": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.slika"
+    },
     "numbers": {
       "match": "\\b[0-9]+\\b",
       "name": "constant.numeric.slika"
+    },
+    "identifiers": {
+      "match": "(?<=\\bas\\s)\\w+|(?<=\\bto\\s)\\w+|(?<=\\bapply\\s)\\w+",
+      "name": "variable.other.slika"
     }
   }
 }

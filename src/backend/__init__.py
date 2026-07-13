@@ -1,1 +1,1 @@
-from backend.cpu_backend import OpenCVBackend
+from src.backend.cpu_backend import OpenCVBackend

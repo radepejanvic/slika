@@ -3,7 +3,15 @@ Image processing DSL
 
 ## VSCode Extension
 
-The extension provides syntax highlighting and LSP support for `.sl` files.
+The extension provides a complete development experience for `.sl` files, including:
+
+- Syntax highlighting
+- Code snippets
+- Language Server Protocol (LSP) support
+- Run Slika programs directly from VSCode
+- Backend selection (CPU / GPU / Auto)
+- Output image preview
+
 
 ### Requirements
 
@@ -18,6 +26,44 @@ The extension provides syntax highlighting and LSP support for `.sl` files.
 4. Select `vscode-extension/slika-lang-1.0.0.vsix`
 
 When you open a `.sl` file the extension automatically starts the Slika language server using the `.venv` Python environment. Make sure `uv sync` has been run before using the extension.
+
+### Editor Features
+
+#### Code snippets
+
+Type one of the following prefixes and press `Tab`:
+
+| Prefix | Description |
+|--------|-------------|
+| `slika` | Complete Slika program template |
+| `load` | Load an image |
+| `pipeline` | Pipeline template |
+| `apply` | Apply a pipeline |
+| `save` | Save an image |
+| `resize` | Resize step |
+| `crop` | Crop step |
+| `gray` | Convert to grayscale |
+| `threshold` | Threshold step |
+| `canny` | Canny edge detection |
+| `erode` | Erode step |
+| `dilate` | Dilate step |
+| `opening` | Opening operation |
+| `closing` | Closing operation |
+
+#### Running programs
+
+Use either:
+
+- the ▶ **Run Slika File** button in the editor toolbar
+- `Ctrl+Shift+R`
+
+#### Backend selection
+
+Click the **Slika: CPU/GPU/AUTO** item in the status bar to choose the processing backend used when running programs.
+
+#### Preview output
+
+Click the 👁 **Preview Output Image** button or use the corresponding command to open the image referenced by the `save ... to` statement.
 
 ---
 

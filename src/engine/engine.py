@@ -1,6 +1,6 @@
 import os
-from engine.context import Context
-from engine.media import (
+from src.engine.context import Context
+from src.engine.media import (
     ImageMedia, VideoMedia, MediaCollection,
     IMAGE_EXTENSIONS, VIDEO_EXTENSIONS,
 )

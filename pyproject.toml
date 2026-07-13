@@ -28,7 +28,7 @@ include = ["src"]
 "slika.grammar" = ["*.tx"]
 
 [project.scripts]
-slika = "cli:main"
+slika = "src.cli:main"
 slika-ls = "src.lsp:main"
 
 [project.entry-points."textx_languages"]
@@ -36,3 +36,6 @@ slika = "src.grammar:slika_language"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.setuptools]
+py-modules = ["cli"]

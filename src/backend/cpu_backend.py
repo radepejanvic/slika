@@ -1,5 +1,5 @@
-from backend.base import Backend
-from backend.constants import *
+from src.backend.base import Backend
+from src.backend.constants import *
 import cv2
 import numpy as np
 import os

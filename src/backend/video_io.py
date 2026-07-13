@@ -1,6 +1,6 @@
 import os
 import cv2
-from backend.constants import VIDEO_FOURCC, DEFAULT_FOURCC
+from src.backend.constants import VIDEO_FOURCC, DEFAULT_FOURCC
 
 
 def _identity(frame):

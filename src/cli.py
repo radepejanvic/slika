@@ -1,7 +1,7 @@
 import argparse
-from engine.engine import Engine
-from backend.cpu_backend import OpenCVBackend
-from backend.gpu_backend import OpenCLBackend
+from src.engine.engine import Engine
+from src.backend.cpu_backend import OpenCVBackend
+from src.backend.gpu_backend import OpenCLBackend
 from textx import metamodel_from_file
 import os
 import sys
@@ -16,24 +16,24 @@ def detect_opencl():
 
 def create_backend(name):
     if name == "cpu":
-        from backend.cpu_backend import OpenCVBackend
+        from src.backend.cpu_backend import OpenCVBackend
         return OpenCVBackend()
 
     if name == "gpu":
         if not detect_opencl():
             print("Error: --backend gpu requested but no GPU found.")
             print("Falling back to CPU backend.")
-            from backend.cpu_backend import OpenCVBackend
+            from src.backend.cpu_backend import OpenCVBackend
             return OpenCVBackend()
         return OpenCLBackend()
 
     if name == "auto":
         if detect_opencl():
             print("GPU detected - using GPU backend.")
-            from backend.cpu_backend import OpenCVBackend
+            from src.backend.cpu_backend import OpenCVBackend
             return OpenCVBackend()
         else:
-            from backend.cpu_backend import OpenCVBackend
+            from src.backend.cpu_backend import OpenCVBackend
             return OpenCVBackend()
 
     print(f"Error: Unknown backend '{name}'. Use cpu, gpu, or auto.")
