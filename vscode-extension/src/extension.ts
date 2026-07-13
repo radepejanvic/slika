@@ -76,6 +76,27 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(selectBackendCommand);
+
+    const previewCommand = vscode.commands.registerCommand('slika.preview', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const text = editor.document.getText();
+        // Find the output path from the last save statement
+        const saveMatch = text.match(/save\s+\w+\s+to\s+"([^"]+)"/);
+        if (!saveMatch) {
+            vscode.window.showWarningMessage('No save statement found in this file.');
+            return;
+        }
+
+        const dir = path.dirname(editor.document.fileName);
+        const outputPath = path.resolve(dir, saveMatch[1]);
+        const outputUri = vscode.Uri.file(outputPath);
+
+        vscode.commands.executeCommand('vscode.open', outputUri);
+    });
+
+    context.subscriptions.push(previewCommand);
 }
 
 function updateStatusBar() {

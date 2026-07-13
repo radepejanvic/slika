@@ -39,12 +39,23 @@
         "command": "slika.selectBackend",
         "title": "Select Backend",
         "category": "Slika"
+      },
+      {
+        "command": "slika.preview",
+        "title": "Preview Output Image",
+        "category": "Slika",
+        "icon": "$(eye)"
       }
     ],
     "menus": {
       "editor/title": [
         {
           "command": "slika.run",
+          "when": "resourceLangId == slika",
+          "group": "navigation"
+        },
+        {
+          "command": "slika.preview",
           "when": "resourceLangId == slika",
           "group": "navigation"
         }
@@ -55,6 +66,12 @@
         "command": "slika.run",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
+        "when": "resourceLangId == slika"
+      },
+      {
+        "command": "slika.preview",
+        "key": "ctrl+shift+p",
+        "mac": "cmd+shift+p",
         "when": "resourceLangId == slika"
       }
     ]
