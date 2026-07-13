@@ -27,7 +27,32 @@
     "snippets": [{
       "language": "slika",
       "path": "./snippets/slika.json"
-    }]
+    }],
+    "commands": [
+      {
+        "command": "slika.run",
+        "title": "Run Slika File",
+        "category": "Slika",
+        "icon": "$(play)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "slika.run",
+          "when": "resourceLangId == slika",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "slika.run",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "resourceLangId == slika"
+      }
+    ]
   },
   "keywords": [],
   "publisher": "trajcex",

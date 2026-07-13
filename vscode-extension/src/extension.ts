@@ -30,6 +30,24 @@ export function activate(context: vscode.ExtensionContext) {
     )
 
     client.start();
+
+    const runCommand = vscode.commands.registerCommand('slika.run', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active .sl file to run.');
+            return;
+        }
+
+        const filePath = editor.document.fileName;
+
+        editor.document.save().then(() => {
+            const terminal = vscode.window.createTerminal('Slika');
+            terminal.show();
+            terminal.sendText(`slika "${filePath}"`);
+        });
+    });
+
+    context.subscriptions.push(runCommand);
 }
 
 
