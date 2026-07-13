@@ -23,6 +23,10 @@
       "language": "slika",
       "scopeName": "source.slika",
       "path": "./syntaxes/slika.tmLanguage.json"
+    }],
+    "snippets": [{
+      "language": "slika",
+      "path": "./snippets/slika.json"
     }]
   },
   "keywords": [],

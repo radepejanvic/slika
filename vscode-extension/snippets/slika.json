@@ -1,0 +1,86 @@
+{
+  "Load Image": {
+    "prefix": "load",
+    "body": "load \"${1:path}\" as ${2:ImageName}",
+    "description": "Load an image from file"
+  },
+  "Pipeline": {
+    "prefix": "pipeline",
+    "body": [
+      "pipeline ${1:PipelineName} {",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a new pipeline block"
+  },
+  "Apply Pipeline": {
+    "prefix": "apply",
+    "body": "apply ${1:PipelineName} to ${2:ImageName}",
+    "description": "Apply a pipeline to an image"
+  },
+  "Save Image": {
+    "prefix": "save",
+    "body": "save ${1:ImageName} to \"${2:path}\"",
+    "description": "Save an image to file"
+  },
+  "Full Pipeline Template": {
+    "prefix": "slika",
+    "body": [
+      "load \"${1:./input.png}\" as ${2:Img}",
+      "",
+      "pipeline ${3:MyPipeline} {",
+      "    $0",
+      "}",
+      "",
+      "apply ${3:MyPipeline} to ${2:Img}",
+      "",
+      "save ${2:Img} to \"${4:./output.png}\""
+    ],
+    "description": "Full slika program template"
+  },
+  "Resize Step": {
+    "prefix": "resize",
+    "body": "resize width=${1:800} height=${2:600}",
+    "description": "Resize image to given dimensions"
+  },
+  "Crop Step": {
+    "prefix": "crop",
+    "body": "crop x=${1:0} y=${2:0} width=${3:100} height=${4:100}",
+    "description": "Crop a region from the image"
+  },
+  "Convert to Grayscale": {
+    "prefix": "gray",
+    "body": "cvt_color code=bgr2gray",
+    "description": "Convert image to grayscale"
+  },
+  "Threshold": {
+    "prefix": "threshold",
+    "body": "threshold value=${1:128} max_value=${2:255} type=${3|binary,binary_inv,trunc,tozero,tozero_inv,otsu,triangle|}",
+    "description": "Apply threshold to image"
+  },
+  "Canny Edge Detection": {
+    "prefix": "canny",
+    "body": "canny threshold1=${1:100} threshold2=${2:200}",
+    "description": "Canny edge detection"
+  },
+  "Erode": {
+    "prefix": "erode",
+    "body": "erode kernel_size=${1:3} iterations=${2:1}",
+    "description": "Erode image"
+  },
+  "Dilate": {
+    "prefix": "dilate",
+    "body": "dilate kernel_size=${1:3} iterations=${2:1}",
+    "description": "Dilate image"
+  },
+  "Opening": {
+    "prefix": "opening",
+    "body": "opening kernel_size=${1:3} iterations=${2:1}",
+    "description": "Morphological opening"
+  },
+  "Closing": {
+    "prefix": "closing",
+    "body": "closing kernel_size=${1:3} iterations=${2:1}",
+    "description": "Morphological closing"
+  }
+}

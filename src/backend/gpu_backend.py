@@ -1,6 +1,6 @@
-from backend.base import Backend
-from backend.constants import *
-from backend.video_io import read_video, write_video
+from src.backend.base import Backend
+from src.backend.constants import *
+from src.backend.video_io import read_video, write_video
 import cv2
 import numpy as np;
 
