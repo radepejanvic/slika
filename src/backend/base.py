@@ -57,4 +57,20 @@ class Backend(ABC):
     @abstractmethod
     def save_video(self, frames, path, fps):
         pass
+
+    @abstractmethod
+    def open_capture(self, device):
+        pass
+
+    @abstractmethod
+    def display(self, image, window_name):
+        pass
+
+    @abstractmethod
+    def wait_key(self, delay):
+        pass
+
+    @abstractmethod
+    def release(self, cap):
+        pass
     
