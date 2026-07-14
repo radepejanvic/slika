@@ -2,8 +2,12 @@ Program:
     statements+=Statement
 ; 
 
+Source: 
+    Load | Capture
+; 
+
 Statement: 
-    Load | Pipeline | Apply | Save | Comment
+    Load | Pipeline | Apply | Save | Capture | Show | Comment
 ; 
 
 Load: 
@@ -17,11 +21,19 @@ Pipeline:
 ; 
 
 Apply: 
-    'apply' pipeline=[Pipeline] 'to' image=[Load]
+    'apply' pipeline=[Pipeline] 'to' image=[Source]
 ; 
 
 Save: 
-    'save' image=[Load] 'to' path=STRING
+    'save' image=[Source] 'to' path=STRING
+; 
+
+Capture: 
+    'capture' device=INT 'as' name=ID
+;
+
+Show: 
+    'show' image=[Source]
 ; 
 
 Comment: 
