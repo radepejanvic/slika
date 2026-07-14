@@ -84,15 +84,23 @@ export function activate(context: vscode.ExtensionContext) {
         if (!editor) return;
 
         const text = editor.document.getText();
-        // Find the output path from the last save statement
+
         const saveMatch = text.match(/save\s+\w+\s+to\s+"([^"]+)"/);
+
         if (!saveMatch) {
             vscode.window.showWarningMessage('No save statement found in this file.');
             return;
         }
 
         const dir = path.dirname(editor.document.fileName);
-        const outputPath = path.resolve(dir, saveMatch[1]);
+        const outputPath = path.isAbsolute(saveMatch[1])
+            ? saveMatch[1]
+            : path.resolve(dir, saveMatch[1]);
+
+        vscode.window.showInformationMessage(
+            `Trying to open: ${outputPath}`
+        );
+
         const outputUri = vscode.Uri.file(outputPath);
 
         vscode.commands.executeCommand('vscode.open', outputUri);
