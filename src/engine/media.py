@@ -9,11 +9,11 @@ class Media(ABC):
 
     @abstractmethod
     def map(self, fn):
-        ...
+        pass
 
     @abstractmethod
     def save(self, backend, path):
-        ...
+        pass
 
 
 class ImageMedia(Media):
@@ -57,3 +57,29 @@ class MediaCollection(Media):
         os.makedirs(path, exist_ok=True)
         for filename, media in self.items:
             media.save(backend, os.path.join(path, filename))
+
+
+class StreamMedia(Media):
+    def __init__(self, cap):
+        self.cap = cap
+        self.pipeline_fn = None
+
+    def map(self, fn):
+        self.pipeline_fn = fn
+        return self
+
+    def save(self, backend, path):
+        raise RuntimeError("Stream isn't compatible with the 'save', use 'show' instead")
+
+    def run(self, backend, window_name="slika"):
+        print("Press q to stop stream processing...")
+        while True:
+            ok, frame = self.cap.read()
+            if not ok:
+                break
+            if self.pipeline_fn:
+                frame = self.pipeline_fn(frame)
+            backend.display(frame, window_name)
+            if backend.wait_key(1) in (ord('q'), 27):
+                break
+        backend.release(self.cap)

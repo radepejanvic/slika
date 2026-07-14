@@ -99,3 +99,19 @@ class OpenCVBackend(Backend):
 
     def canny(self, image, threshold1, threshold2):
         return cv2.Canny(image, threshold1, threshold2)
+    
+    def open_capture(self, device):
+        cap = cv2.VideoCapture(device)
+        if not cap.isOpened():
+            raise RuntimeError(f"Couldn't open camera: {device}")
+        return cap
+
+    def display(self, image, window_name):
+        cv2.imshow(window_name, image)
+
+    def wait_key(self, delay):
+        return cv2.waitKey(delay) & 0xFF
+
+    def release(self, cap):
+        cap.release()
+        cv2.destroyAllWindows()

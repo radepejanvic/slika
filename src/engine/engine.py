@@ -1,9 +1,6 @@
 import os
 from src.engine.context import Context
-from src.engine.media import (
-    ImageMedia, VideoMedia, MediaCollection,
-    IMAGE_EXTENSIONS, VIDEO_EXTENSIONS,
-)
+from src.engine.media import *
 
 class Engine:
     def __init__(self, backend):
@@ -19,8 +16,12 @@ class Engine:
         match class_name:
             case "Load":
                 self.execute_load(stmt)
+            case "Capture":
+                self.execute_capture(stmt)
             case "Apply":
                 self.execute_apply(stmt)
+            case "Show":
+                self.execute_show(stmt)
             case "Save":
                 self.execute_save(stmt)
 
@@ -102,6 +103,19 @@ class Engine:
                 return self.backend.grayscale(image)
             case _:
                 raise RuntimeError(f"Unknown simple step: {step.op}")
+            
+    def execute_capture(self, stmt):
+        cap = self.backend.open_capture(stmt.device)
+        self.context.store(stmt.name, StreamMedia(cap))
+
+    def execute_show(self, stmt):
+        media = self.context.get(stmt.image.name)
+        if isinstance(media, StreamMedia):
+            media.run(self.backend)
+        else:
+            self.backend.display(media.frame, "slika")
+            self.backend.wait_key(0)
+            self.backend.release(None)
             
     def apply_pipeline(self, pipeline, frame):
         for step in pipeline.steps:
