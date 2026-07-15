@@ -140,6 +140,78 @@ def test_empty_folder_raises(tmp_path):
         ''', tmp_path)
 
 
+def test_broken_image_is_skipped_and_reported(tmp_path):
+    in_dir = Path(tmp_path) / "in"
+    in_dir.mkdir()
+    create_test_image(in_dir, "a.png")
+    create_test_image(in_dir, "b.png", size=(5, 5))
+    create_test_image(in_dir, "c.png")
+    out_dir = Path(tmp_path) / "out"
+    run_program(f'''
+        load "{in_dir.as_posix()}" as Batch
+        pipeline Obrada {{ crop x=50 y=50 width=10 height=10
+                            resize width=20 height=20 }}
+        apply Obrada to Batch
+        save Batch to "{out_dir.as_posix()}"
+    ''', tmp_path)
+
+    assert (out_dir / "a.png").exists()
+    assert (out_dir / "c.png").exists()
+    assert not (out_dir / "b.png").exists()
+
+    report_path = out_dir / "report.txt"
+    assert report_path.exists()
+    content = report_path.read_text()
+    assert "b.png" in content
+    assert "resize" in content
+    assert "Traceback" in content
+
+    assert "## a.png" not in content
+    assert "## c.png" not in content
+
+
+def test_broken_image_in_nested_folder_reports_relative_path(tmp_path):
+    in_dir = Path(tmp_path) / "in"
+    (in_dir / "sub").mkdir(parents=True)
+    create_test_image(in_dir, "a.png")
+    create_test_image(in_dir / "sub", "broken.png", size=(5, 5))
+    out_dir = Path(tmp_path) / "out"
+    run_program(f'''
+        load "{in_dir.as_posix()}" as Batch
+        pipeline Obrada {{ crop x=50 y=50 width=10 height=10
+                            resize width=20 height=20 }}
+        apply Obrada to Batch
+        save Batch to "{out_dir.as_posix()}"
+    ''', tmp_path)
+
+    assert (out_dir / "a.png").exists()
+    assert not (out_dir / "sub" / "broken.png").exists()
+    content = (out_dir / "report.txt").read_text()
+    assert "sub/broken.png" in content
+
+
+def test_explicit_report_path(tmp_path):
+    in_dir = Path(tmp_path) / "in"
+    in_dir.mkdir()
+    create_test_image(in_dir, "a.png")
+    create_test_image(in_dir, "b.png", size=(5, 5))
+    out_dir = Path(tmp_path) / "out"
+    report_path = Path(tmp_path) / "logs" / "failures.txt"
+    run_program(f'''
+        load "{in_dir.as_posix()}" as Batch
+        pipeline Obrada {{ crop x=50 y=50 width=10 height=10
+                            resize width=20 height=20 }}
+        apply Obrada to Batch
+        save Batch to "{out_dir.as_posix()}" report "{report_path.as_posix()}"
+    ''', tmp_path)
+
+    assert (out_dir / "a.png").exists()
+    assert not (out_dir / "report.txt").exists()
+    assert report_path.exists()
+    content = report_path.read_text()
+    assert "SLIKA BATCH PROCESSING REPORT" in content
+    assert "b.png" in content
+
 def test_image_save_to_missing_dir_raises(tmp_path):
     in_path = create_test_image(tmp_path, "in.png")
     out = Path(tmp_path) / "missing" / "out.png"
