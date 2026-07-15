@@ -14,19 +14,25 @@ Load:
     'load' path=STRING 'as' name=ID
 ; 
 
-Pipeline: 
-    'pipeline' name=ID '{' 
+Pipeline:
+    'pipeline' name=ID
+    ('(' params+=ID[',']? ')')?
+    '{'
         steps+=Step
     '}'
-; 
+;
 
-Apply: 
-    'apply' pipeline=[Pipeline] 'to' image=[Source]
-; 
+Apply:
+    'apply' pipeline=PipelineCall 'to' image=[Source]
+;
 
 Save: 
     'save' image=[Source] 'to' path=STRING
 ; 
+
+PipelineCall:
+    name=ID ('(' args+=Expr[',']? ')')?
+;
 
 Capture: 
     'capture' device=INT 'as' name=ID

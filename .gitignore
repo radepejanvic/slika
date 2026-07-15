@@ -180,3 +180,9 @@ env
 
 node_modules
 vscode-extension/out/
+
+# VS Code extension packages
+*.vsix
+
+# VS Code extension bundled executables
+vscode-extension/bin/*.exe
