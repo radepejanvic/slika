@@ -1,7 +1,22 @@
 import os
+import traceback
 from src.engine.context import Context
 from src.engine.media import *
 from src.engine.expr import evaluate_expr
+from src.engine.errors import *
+from src.engine.report import *
+
+STEP_DISPLAY_NAMES = {
+    "Resize": "resize",
+    "Crop": "crop",
+    "ConvertColor": "cvt_color",
+    "Threshold": "threshold",
+    "Erode": "erode",
+    "Dilate": "dilate",
+    "Opening": "opening",
+    "Closing": "closing",
+    "Canny": "canny",
+}
 
 class Engine:
     def __init__(self, backend):
@@ -68,7 +83,12 @@ class Engine:
 
     def execute_save(self, stmt): 
         media = self.context.get(stmt.image.name)
-        media.save(self.backend, stmt.path) 
+        media.save(self.backend, stmt.path)
+        errors = getattr(media, "batch_errors", None)
+        if errors:
+            report_path = stmt.report_path if stmt.report_path else os.path.join(stmt.path, "report.txt")
+            report_path = write_report(errors, report_path)
+            print(f"{len(errors)} item(s) failed during processing (skipped). Report written to: {report_path}")
 
     def execute_let(self, stmt):
         self.context.variables[stmt.name] = evaluate_expr(stmt.value, self.context.variables)
@@ -79,7 +99,27 @@ class Engine:
 
     def execute_apply(self, stmt):
         media = self.context.get(stmt.image.name)
-        media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
+        if isinstance(media, MediaCollection):
+            media.batch_errors = self.apply_to_collection(media, stmt.pipeline)
+            if media.batch_errors:
+                print(f"Warning: {len(media.batch_errors)} item(s) failed during pipeline processing; "
+                      f"they will be skipped on save. A report will be written next to the output.")
+        else:
+            media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
+
+    def apply_to_collection(self, collection, pipeline, prefix=""):
+        errors = []
+        for filename, media in collection.items:
+            rel_path = filename if not prefix else f"{prefix}/{filename}"
+            if isinstance(media, MediaCollection):
+                errors.extend(self.apply_to_collection(media, pipeline, rel_path))
+                continue
+            try:
+                media.map(lambda frame: self.apply_pipeline(pipeline, frame))
+            except StepError as e:
+                media.failed = True
+                errors.append(BatchError(rel_path, e.step_name, e.original_exception, e.traceback_str))
+        return errors
 
     def execute_step(self, step, image):
         class_name = step.__class__.__name__
@@ -129,5 +169,14 @@ class Engine:
             
     def apply_pipeline(self, pipeline, frame):
         for step in pipeline.steps:
-            frame = self.execute_step(step, frame)
+            try:
+                frame = self.execute_step(step, frame)
+            except Exception as e:
+                raise StepError(self.step_display_name(step), e, traceback.format_exc()) from e
         return frame
+
+    def step_display_name(self, step):
+        class_name = step.__class__.__name__
+        if class_name == "SimpleStep":
+            return step.op
+        return STEP_DISPLAY_NAMES.get(class_name, class_name)

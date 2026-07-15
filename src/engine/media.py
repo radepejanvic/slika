@@ -56,6 +56,8 @@ class MediaCollection(Media):
     def save(self, backend, path):
         os.makedirs(path, exist_ok=True)
         for filename, media in self.items:
+            if getattr(media, "failed", False):
+                continue
             media.save(backend, os.path.join(path, filename))
 
 
