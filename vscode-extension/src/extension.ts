@@ -6,14 +6,15 @@ let client: LanguageClient;
 let backendStatusBar: vscode.StatusBarItem;
 let currentBackend: string = 'cpu';
 
+function binPath(context: vscode.ExtensionContext, name: string): string {
+    const exe = process.platform === 'win32' ? `${name}.exe` : name;
+    return path.join(context.extensionPath, 'bin', exe);
+}
+
 export function activate(context: vscode.ExtensionContext) {
-    const projectRoot = path.join(context.extensionPath, '..');
     const serverOptions: ServerOptions = {
-        command: path.join(projectRoot, '.venv', 'bin', 'python'),
-        args: ['-m', 'src.lsp'],
-        options: {
-            cwd: projectRoot
-        },
+        command: binPath(context, 'slika-ls'),
+        args: [],
         transport: TransportKind.stdio
     };
 
@@ -41,11 +42,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         const filePath = editor.document.fileName;
+        const cliPath = binPath(context, 'slika-cli');
 
         editor.document.save().then(() => {
             const terminal = vscode.window.createTerminal('Slika');
             terminal.show();
-            terminal.sendText(`slika "${filePath}" --backend ${currentBackend}`);
+            terminal.sendText(`& "${cliPath}" "${filePath}" --backend ${currentBackend}`);
         });
     });
 
@@ -82,15 +84,23 @@ export function activate(context: vscode.ExtensionContext) {
         if (!editor) return;
 
         const text = editor.document.getText();
-        // Find the output path from the last save statement
+
         const saveMatch = text.match(/save\s+\w+\s+to\s+"([^"]+)"/);
+
         if (!saveMatch) {
             vscode.window.showWarningMessage('No save statement found in this file.');
             return;
         }
 
         const dir = path.dirname(editor.document.fileName);
-        const outputPath = path.resolve(dir, saveMatch[1]);
+        const outputPath = path.isAbsolute(saveMatch[1])
+            ? saveMatch[1]
+            : path.resolve(dir, saveMatch[1]);
+
+        vscode.window.showInformationMessage(
+            `Trying to open: ${outputPath}`
+        );
+
         const outputUri = vscode.Uri.file(outputPath);
 
         vscode.commands.executeCommand('vscode.open', outputUri);

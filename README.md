@@ -115,6 +115,87 @@ uv run pytest .\tests
 uv add package-name
 ```
 
+### Packaging the VSCode Extension
+
+The extension bundles the Slika CLI and Language Server as standalone executables, so users do not need a local Python environment.
+
+#### 1. Prerequisites
+
+Activate the virtual environment
+
+Install PyInstaller if it is not already available:
+
+```bash
+uv add --group dev pyinstaller
+```
+
+Install the VS Code packaging tool:
+
+```bash
+npm install -g @vscode/vsce
+```
+
+#### 2. Build the Language Server
+
+Create a temporary entry point:
+
+```powershell
+@'
+from src.lsp.server import main
+
+if __name__ == "__main__":
+    main()
+'@ | Set-Content -Path $env:TEMP\slika_ls_entry.py -Encoding utf8
+```
+
+Build the executable:
+
+```powershell
+pyinstaller --name slika-ls --onefile `
+  --collect-all cv2 --collect-all textX --collect-submodules src `
+  --add-data "src/grammar/slika.tx;src/grammar" `
+  -p . $env:TEMP\slika_ls_entry.py
+```
+
+#### 3. Build the CLI
+
+```powershell
+pyinstaller --name slika-cli --onefile `
+  --collect-all cv2 --collect-all textX --collect-submodules src `
+  --add-data "src/grammar/slika.tx;grammar" `
+  -p . src\cli.py
+```
+
+#### 4. Copy the executables
+
+```powershell
+New-Item -ItemType Directory -Force -Path vscode-extension\bin
+
+Copy-Item dist\slika-ls.exe vscode-extension\bin\slika-ls.exe
+Copy-Item dist\slika-cli.exe vscode-extension\bin\slika-cli.exe
+```
+
+#### 5. Package the extension
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+vsce package
+```
+
+The generated `.vsix` file can be installed from VS Code using **Extensions → Install from VSIX...** or from the command line:
+
+```bash
+code --install-extension slika-lang-1.1.0.vsix --force
+```
+
+To uninstall the extension remove it from the Extensions view in VS Code or run:
+
+```bash
+code --uninstall-extension trajcex.slika-lang
+```
+
 ### Project structure
 
 ```
