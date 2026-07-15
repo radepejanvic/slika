@@ -25,8 +25,8 @@ Apply:
 ; 
 
 Save: 
-    'save' image=[Source] 'to' path=STRING
-; 
+    'save' image=[Source] 'to' path=STRING ('report' report_path=STRING)?
+;
 
 Capture: 
     'capture' device=INT 'as' name=ID
