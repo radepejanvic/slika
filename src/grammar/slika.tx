@@ -7,7 +7,7 @@ Source:
 ; 
 
 Statement: 
-    Load | Pipeline | Apply | Save | Capture | Show | Comment
+    Load | Pipeline | Apply | Save | Capture | Show | Comment | Let
 ; 
 
 Load: 
@@ -40,6 +40,25 @@ Comment:
     /\/\/.*$/
 ;
 
+Let: 
+    'let' name=ID '=' value=Expr
+;
+
+Expr:
+    op=Term (op0+=PlusOrMinus op1+=Term)*
+;
+
+Term: 
+    op=Factor (op0+=MulOrDiv op1+=Factor)*
+;
+
+Factor:
+    INT | ID | '(' Expr ')'
+;
+
+PlusOrMinus: '+' | '-';
+MulOrDiv: '*' | '/';
+
 Step:
     SimpleStep | Resize | Crop | ConvertColor |
     Threshold | Erode | Dilate | Opening |
@@ -51,12 +70,12 @@ SimpleStep:
 ;
 
 Resize:
-    'resize' 'width=' width=INT 'height=' height=INT
+    'resize' 'width=' width=Expr 'height=' height=Expr
 ;
 
 
 Crop:
-    'crop' 'x=' x=INT 'y=' y=INT 'width=' width=INT 'height=' height=INT
+    'crop' 'x=' x=Expr 'y=' y=Expr 'width=' width=Expr 'height=' height=Expr
 ;
 
 
@@ -65,27 +84,27 @@ ConvertColor:
 ;
 
 Threshold: 
-    'threshold' 'value=' value=INT ('max_value=' max_value=INT)? ('type=' type=ThresholdType)?
+    'threshold' 'value=' value=Expr ('max_value=' max_value=Expr)? ('type=' type=ThresholdType)?
 ;
 
 Erode:
-    'erode' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+    'erode' ('kernel_size=' kernel_size=Expr)? ('iterations=' iterations=Expr)?
 ;
 
 Dilate:
-    'dilate' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+    'dilate' ('kernel_size=' kernel_size=Expr)? ('iterations=' iterations=Expr)?
 ;
 
 Opening:
-    'opening' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+    'opening' ('kernel_size=' kernel_size=Expr)? ('iterations=' iterations=Expr)?
 ;
 
 Closing:
-    'closing' ('kernel_size=' kernel_size=INT)? ('iterations=' iterations=INT)?
+    'closing' ('kernel_size=' kernel_size=Expr)? ('iterations=' iterations=Expr)?
 ;
 
 Canny:
-    'canny' 'threshold1=' threshold1=INT 'threshold2=' threshold2=INT
+    'canny' 'threshold1=' threshold1=Expr 'threshold2=' threshold2=Expr
 ;
 
 ColorConversionCode:
