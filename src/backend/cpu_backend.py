@@ -77,6 +77,9 @@ class OpenCVBackend(Backend):
         if type not in THRESHOLD_TYPES:
             raise ValueError(f'Unknown threshold type: {type}')
         
+        if max_value is None:
+            max_value = 255
+
         cv2_type = THRESHOLD_TYPES[type]
         _, th_img = cv2.threshold(image, value, max_value, cv2_type)
         return th_img

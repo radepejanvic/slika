@@ -1,6 +1,7 @@
 class Context:
     def __init__(self):
         self._resources = {}
+        self.variables = {}
 
     def store(self, name, resource):
         self._resources[name] = resource

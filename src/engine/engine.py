@@ -1,6 +1,7 @@
 import os
 from src.engine.context import Context
 from src.engine.media import *
+from src.engine.expr import evaluate_expr
 
 class Engine:
     def __init__(self, backend):
@@ -18,6 +19,8 @@ class Engine:
                 self.execute_load(stmt)
             case "Capture":
                 self.execute_capture(stmt)
+            case "Let":
+                self.execute_let(stmt)
             case "Apply":
                 self.execute_apply(stmt)
             case "Show":
@@ -67,6 +70,13 @@ class Engine:
         media = self.context.get(stmt.image.name)
         media.save(self.backend, stmt.path) 
 
+    def execute_let(self, stmt):
+        self.context.variables[stmt.name] = evaluate_expr(stmt.value, self.context.variables)
+
+    def eval(self, expr):
+        value = evaluate_expr(expr, self.context.variables)
+        return None if value is None else int(value)
+
     def execute_apply(self, stmt):
         media = self.context.get(stmt.image.name)
         media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
@@ -77,23 +87,23 @@ class Engine:
             case "SimpleStep":
                 return self.execute_simple_step(image, step)
             case "Resize":
-                return self.backend.resize(image, step.width, step.height)
+                return self.backend.resize(image, self.eval(step.width), self.eval(step.height))
             case "Crop":
-                return self.backend.crop(image, step.x, step.y, step.width, step.height)
+                return self.backend.crop(image, self.eval(step.x), self.eval(step.y), self.eval(step.width), self.eval(step.height))
             case "ConvertColor":
                 return self.backend.cvt_color(image, step.code)
             case "Threshold":
-                return self.backend.threshold(image, step.value, step.max_value, step.type)
+                return self.backend.threshold(image, self.eval(step.value), self.eval(step.max_value), step.type or 'binary')
             case "Erode":
-                return self.backend.erode(image, step.kernel_size, step.iterations)
+                return self.backend.erode(image, self.eval(step.kernel_size), self.eval(step.iterations))
             case "Dilate":
-                return self.backend.dilate(image, step.kernel_size, step.iterations)
+                return self.backend.dilate(image, self.eval(step.kernel_size), self.eval(step.iterations))
             case "Opening":
-                return self.backend.opening(image, step.kernel_size, step.iterations)
+                return self.backend.opening(image, self.eval(step.kernel_size), self.eval(step.iterations))
             case "Closing":
-                return self.backend.closing(image, step.kernel_size, step.iterations)
+                return self.backend.closing(image, self.eval(step.kernel_size), self.eval(step.iterations))
             case "Canny":
-                return self.backend.canny(image, step.threshold1, step.threshold2)
+                return self.backend.canny(image, self.eval(step.threshold1), self.eval(step.threshold2))
             case _:
                 raise RuntimeError(f"Unknown step: {class_name}")
             
