@@ -90,7 +90,15 @@ class Engine:
         pipeline_call = stmt.pipeline
         pipeline = self.context.get_pipeline(pipeline_call.name)
         local_scope={}
-        for i,param in enumerate(pipeline.params):
+        params = pipeline.params or []
+        if len(params) != len(pipeline_call.args):
+            raise RuntimeError(
+                f"Pipeline '{pipeline.name}' expects "
+                f"{len(params)} arguments, got "
+                f"{len(pipeline_call.args)}"
+            )
+
+        for i, param in enumerate(params):
             local_scope[param] = self.eval(pipeline_call.args[i])
 
         media.map(

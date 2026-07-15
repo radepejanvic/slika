@@ -15,7 +15,9 @@ Load:
 ; 
 
 Pipeline:
-    'pipeline' name=ID '(' params+=ID[',']? ')' '{'
+    'pipeline' name=ID
+    ('(' params+=ID[',']? ')')?
+    '{'
         steps+=Step
     '}'
 ;
@@ -29,9 +31,7 @@ Save:
 ; 
 
 PipelineCall:
-
-    name=ID '(' args+=Expr[',']? ')'
-
+    name=ID ('(' args+=Expr[',']? ')')?
 ;
 
 Capture: 
