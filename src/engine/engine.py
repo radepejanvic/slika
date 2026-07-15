@@ -17,6 +17,8 @@ class Engine:
         match class_name:
             case "Load":
                 self.execute_load(stmt)
+            case "Pipeline":
+                self.execute_pipeline_declaration(stmt)
             case "Capture":
                 self.execute_capture(stmt)
             case "Let":
@@ -65,6 +67,12 @@ class Engine:
             frames, fps = self.backend.load_video(path)
             return VideoMedia(frames, fps)
         raise RuntimeError(f"Unsupported file type: '{path}'")
+    
+    def execute_pipeline_declaration(self, stmt):
+        self.context.store_pipeline(
+            stmt.name,
+            stmt
+        )
 
     def execute_save(self, stmt): 
         media = self.context.get(stmt.image.name)
@@ -79,7 +87,16 @@ class Engine:
 
     def execute_apply(self, stmt):
         media = self.context.get(stmt.image.name)
-        media.map(lambda frame: self.apply_pipeline(stmt.pipeline, frame))
+        pipeline_call = stmt.pipeline
+        pipeline = self.context.get_pipeline(pipeline_call.name)
+        local_scope={}
+        for i,param in enumerate(pipeline.params):
+            local_scope[param] = self.eval(pipeline_call.args[i])
+
+        media.map(
+            lambda frame:
+                self.apply_pipeline(pipeline, frame, local_scope)
+            )
 
     def execute_step(self, step, image):
         class_name = step.__class__.__name__
@@ -127,7 +144,13 @@ class Engine:
             self.backend.wait_key(0)
             self.backend.release(None)
             
-    def apply_pipeline(self, pipeline, frame):
-        for step in pipeline.steps:
-            frame = self.execute_step(step, frame)
+    def apply_pipeline(self, pipeline, frame, local_scope):
+        old_scope = self.context.variables.copy()
+        self.context.variables.update(local_scope)
+        try:
+            for step in pipeline.steps:
+                frame=self.execute_step(step, frame)
+        finally:
+            self.context.variables = old_scope
+
         return frame
