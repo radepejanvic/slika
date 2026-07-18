@@ -62,8 +62,16 @@ def _semantic_checks(text: str) -> list[Diagnostic]:
     defined_pipelines = re.findall(r'\bpipeline\s+(\w+)', text)
     defined_images    = re.findall(r'\bas\s+(\w+)', text)
     used_pipelines    = re.findall(r'\bapply\s+(\w+)', text)
-    used_images       = re.findall(r'\bapply\s+\w+\s+to\s+(\w+)', text)
+    used_images       = re.findall(r'\bapply\s+\w+(?:\([^)]*\))?\s+to\s+(\w+)', text)
     saved_images      = re.findall(r'\bsave\s+(\w+)', text)
+    trim_sources      = re.findall(r'\btrim\s+(\w+)\s+from', text)
+    concat_sources    = [
+        name.strip()
+        for group in re.findall(r'\bconcat\s+(.+?)\s+as\s+\w+', text)
+        for name in group.split(',') if name.strip()
+    ]
+
+    used_names = used_images + saved_images + trim_sources + concat_sources
 
     for name in used_pipelines:
         if name not in defined_pipelines:
@@ -80,13 +88,23 @@ def _semantic_checks(text: str) -> list[Diagnostic]:
             line_idx = _find_line(lines, rf'\bsave\s+{name}\b')
             diagnostics.append(_diagnostic(line_idx, f"Image '{name}' is not defined.", DiagnosticSeverity.Error))
 
+    for name in trim_sources:
+        if name not in defined_images:
+            line_idx = _find_line(lines, rf'\btrim\s+{name}\s+from\b')
+            diagnostics.append(_diagnostic(line_idx, f"Source '{name}' is not defined.", DiagnosticSeverity.Error))
+
+    for name in concat_sources:
+        if name not in defined_images:
+            line_idx = _find_line(lines, rf'\bconcat\b.*\b{name}\b')
+            diagnostics.append(_diagnostic(line_idx, f"Source '{name}' is not defined.", DiagnosticSeverity.Error))
+
     for name in defined_pipelines:
         if name not in used_pipelines:
             line_idx = _find_line(lines, rf'\bpipeline\s+{name}\b')
             diagnostics.append(_diagnostic(line_idx, f"Pipeline '{name}' is defined but never used.", DiagnosticSeverity.Warning))
 
     for name in defined_images:
-        if name not in used_images and name not in saved_images:
+        if name not in used_names:
             line_idx = _find_line(lines, rf'\bas\s+{name}\b')
             diagnostics.append(_diagnostic(line_idx, f"Image '{name}' is loaded but never used.", DiagnosticSeverity.Warning))
 

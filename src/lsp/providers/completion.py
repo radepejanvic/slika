@@ -23,6 +23,7 @@ def register(server: LanguageServer):
             last=_last_token(current_line),
             text_before=text_before,
             step=_current_step(current_line),
+            statement=_current_statement(current_line),
             inside_pipeline=text_before.count('{') > text_before.count('}'),
             pipelines=pipelines,
             images=images,
@@ -31,10 +32,14 @@ def register(server: LanguageServer):
 
 # TODO: add file path completion for load and save - detect when cursor is
 # inside a string after 'load' or 'save' and list files using os.listdir()
-def _resolve_items(last, text_before, step, inside_pipeline, pipelines, images):
+def _resolve_items(last, text_before, step, statement, inside_pipeline, pipelines, images):
     if last == 'apply':
         return _items(pipelines, CompletionItemKind.Variable)
     if last == 'to' and 'apply' in text_before.split()[-4:]:
+        return _items(images, CompletionItemKind.Variable)
+    if last in ('trim', 'concat'):
+        return _items(images, CompletionItemKind.Variable)
+    if statement == 'concat' and last.endswith(','):
         return _items(images, CompletionItemKind.Variable)
     if last == 'code=':
         return _items(COLOR_CODES, CompletionItemKind.EnumMember)
@@ -58,6 +63,10 @@ def _current_step(line_before: str) -> str | None:
         return tokens[0]
     return None
 
+def _current_statement(line_before: str) -> str | None:
+    tokens = line_before.strip().split()
+    return tokens[0] if tokens else None
+
 def _last_token(line_before: str) -> str:
     tokens = line_before.strip().split()
     return tokens[-1] if tokens else ''
@@ -65,7 +74,11 @@ def _last_token(line_before: str) -> str:
 
 def _defined_names(source: str):
     pipelines = re.findall(r'\bpipeline\s+(\w+)', source)
-    images = re.findall(r'\bload\s+\S+\s+as\s+(\w+)', source)
+    loaded    = re.findall(r'\bload\s+\S+\s+as\s+(\w+)', source)
+    captured  = re.findall(r'\bcapture\s+\S+\s+as\s+(\w+)', source)
+    trimmed   = re.findall(r'\btrim\s+\S+\s+from\s+.+?\s+to\s+.+?\s+as\s+(\w+)', source)
+    concated  = re.findall(r'\bconcat\s+.+?\s+as\s+(\w+)', source)
+    images = loaded + captured + trimmed + concated
     return pipelines, images
 
 def _items(labels: list[str], kind: CompletionItemKind) -> list[CompletionItem]:

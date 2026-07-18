@@ -1,4 +1,4 @@
-TOP_LEVEL_KEYWORDS = ['load', 'pipeline', 'apply', 'save']
+TOP_LEVEL_KEYWORDS = ['load', 'pipeline', 'apply', 'save', 'trim', 'concat']
 
 STEP_KEYWORDS = [
     'resize', 'crop', 'cvt_color', 'threshold',
