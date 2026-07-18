@@ -19,7 +19,7 @@
       "name": "comment.line.double-slash.slika"
     },
     "keywords": {
-      "match": "\\b(load|pipeline|apply|save|as|to)\\b",
+      "match": "\\b(load|pipeline|apply|save|trim|concat|capture|show|let|as|to|from)\\b",
       "name": "keyword.control.slika"
     },
     "steps": {
@@ -49,7 +49,7 @@
       "name": "constant.numeric.slika"
     },
     "identifiers": {
-      "match": "(?<=\\bas\\s)\\w+|(?<=\\bto\\s)\\w+|(?<=\\bapply\\s)\\w+",
+      "match": "(?<=\\bas\\s)\\w+|(?<=\\bto\\s)\\w+|(?<=\\bapply\\s)\\w+|(?<=\\btrim\\s)\\w+|(?<=\\bconcat\\s)\\w+|(?<=,\\s)\\w+",
       "name": "variable.other.slika"
     }
   }

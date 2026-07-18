@@ -82,5 +82,15 @@
     "prefix": "closing",
     "body": "closing kernel_size=${1:3} iterations=${2:1}",
     "description": "Morphological closing"
+  },
+  "Trim Video": {
+    "prefix": "trim",
+    "body": "trim ${1:VideoName} from ${2:start} to ${3:end} as ${4:ClipName}",
+    "description": "Cut a video segment between two timestamps (in seconds)"
+  },
+  "Concat Videos": {
+    "prefix": "concat",
+    "body": "concat ${1:ClipA}, ${2:ClipB} as ${3:CombinedName}",
+    "description": "Join multiple video clips into one"
   }
 }

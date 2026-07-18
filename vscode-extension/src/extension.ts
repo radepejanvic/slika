@@ -47,7 +47,10 @@ export function activate(context: vscode.ExtensionContext) {
         editor.document.save().then(() => {
             const terminal = vscode.window.createTerminal('Slika');
             terminal.show();
-            terminal.sendText(`& "${cliPath}" "${filePath}" --backend ${currentBackend}`);
+            const command = process.platform === 'win32'
+                ? `& "${cliPath}" "${filePath}" --backend ${currentBackend}`
+                : `"${cliPath}" "${filePath}" --backend ${currentBackend}`;
+            terminal.sendText(command);
         });
     });
 
