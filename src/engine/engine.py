@@ -29,6 +29,10 @@ class Engine:
                 self.execute_show(stmt)
             case "Save":
                 self.execute_save(stmt)
+            case "Trim":
+                self.execute_trim(stmt)
+            case "Concat":
+                self.execute_concat(stmt)
 
     def execute_load(self, stmt):
         media = self.load_media(stmt.path)
@@ -77,6 +81,41 @@ class Engine:
     def execute_save(self, stmt): 
         media = self.context.get(stmt.image.name)
         media.save(self.backend, stmt.path) 
+
+    def execute_trim(self, stmt):
+        media = self.context.get(stmt.source.name)
+        if not isinstance(media, VideoMedia):
+            raise RuntimeError(f"'trim' expects a video, got '{stmt.source.name}'")
+
+        start = self.eval(stmt.start)
+        end = self.eval(stmt.end)
+        if start is None or end is None or start < 0 or end <= start:
+            raise RuntimeError(f"Invalid trim range: {start}-{end}")
+
+        start_frame = int(start * media.fps)
+        end_frame = int(end * media.fps)
+        frames = media.frames[start_frame:end_frame]
+        if not frames:
+            duration = len(media.frames) / media.fps
+            raise RuntimeError(
+                f"Trim range {start}-{end}s produced no frames "
+                f"('{stmt.source.name}' is {duration:.2f}s long)"
+            )
+
+        self.context.store(stmt.name, VideoMedia(frames, media.fps))
+
+    def execute_concat(self, stmt):
+        clips = [self.context.get(src.name) for src in stmt.sources]
+        for src, clip in zip(stmt.sources, clips):
+            if not isinstance(clip, VideoMedia):
+                raise RuntimeError(f"'concat' expects videos, got '{src.name}'")
+
+        fps = clips[0].fps
+        frames = []
+        for clip in clips:
+            frames.extend(clip.frames)
+
+        self.context.store(stmt.name, VideoMedia(frames, fps))
 
     def execute_let(self, stmt):
         self.context.variables[stmt.name] = evaluate_expr(stmt.value, self.context.variables)

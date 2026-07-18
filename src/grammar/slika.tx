@@ -2,17 +2,25 @@ Program:
     statements+=Statement
 ; 
 
-Source: 
-    Load | Capture
-; 
+Source:
+    Load | Capture | Trim | Concat
+;
 
-Statement: 
-    Load | Pipeline | Apply | Save | Capture | Show | Comment | Let
-; 
+Statement:
+    Load | Pipeline | Apply | Save | Capture | Show | Comment | Let | Trim | Concat
+;
 
-Load: 
+Load:
     'load' path=STRING 'as' name=ID
-; 
+;
+
+Trim:
+    'trim' source=[Source] 'from' start=Expr 'to' end=Expr 'as' name=ID
+;
+
+Concat:
+    'concat' sources+=[Source][','] 'as' name=ID
+;
 
 Pipeline:
     'pipeline' name=ID
